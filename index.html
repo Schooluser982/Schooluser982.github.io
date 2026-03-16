@@ -113,6 +113,31 @@
       transform: scale(1.05);
       background: #00ffaa;
     }
+
+    /* Visit Counter */
+    #visitCounterBox {
+      margin: 20px auto;
+      padding: 15px 25px;
+      width: fit-content;
+      background: #111;
+      border: 2px solid #00ff66;
+      border-radius: 10px;
+      color: #00ff66;
+      font-size: 20px;
+      box-shadow: 0 0 12px #00ff66;
+      transition: 0.2s;
+    }
+
+    #visitCounterBox:hover {
+      transform: scale(1.05);
+      border-color: #00ffaa;
+      box-shadow: 0 0 15px #00ffaa;
+    }
+
+    #visitCount {
+      font-weight: bold;
+      color: #00ffaa;
+    }
   </style>
 </head>
 
@@ -121,8 +146,8 @@
   <!-- Popup -->
   <div id="popupOverlay">
     <div id="popupBox">
-      <h2>DISCLAMER</h2>
-      <p>All these games and images rights go to their respective owners. I do not claim to own any of these games or images. This is just a repo/github.io website to view/play these games</p>
+      <h2>DISCLAIMER</h2>
+      <p>All these games and images rights go to their respective owners. I do not claim to own any of these games or images. This is just a repo/github.io website to view/play these games.</p>
       <button id="acceptBtn">Accept & Continue</button>
     </div>
   </div>
@@ -130,49 +155,60 @@
   <h1>Totally Cool Math Games</h1>
   <pre>Repo https://github.com/Schooluser982/Schooluser982.github.io/</pre>
 
+  <!-- Visit Counter -->
+  <div id="visitCounterBox">
+    <p>Total Visits: <span id="visitCount">Loading...</span></p>
+  </div>
+
   <!-- Search Bar -->
   <input type="text" id="searchBar" placeholder="Search for a game...">
 
   <!-- Game List -->
   <div id="gameslist">
 
-    <div class="game-card" data-name="Flappy Bird" onclick="openGame('games/FlappyBird.html')">
+    <div class="game-card" data-name="Flappy Bird" onclick="openGame('FlappyBird.html')">
       <img src="gamephoto/flappybird.png" alt="Flappy Bird">
       <p>Flappy Bird</p>
     </div>
 
-    <div class="game-card" data-name="Infinite Craft" onclick="openGame('games/InfiniteCraft.html')">
+    <div class="game-card" data-name="Infinite Craft" onclick="openGame('InfiniteCraft.html')">
       <img src="gamephoto/infinitecraft.png" alt="Infinite Craft">
       <p>Infinite Craft</p>
     </div>
 
-    <div class="game-card" data-name="Sky Rider" onclick="openGame('games/SkyRiders.html')">
+    <div class="game-card" data-name="Sky Rider" onclick="openGame('SkyRiders.html')">
       <img src="gamephoto/skyrider.png" alt="Sky Rider">
       <p>Sky Rider</p>
     </div>
 
-    <div class="game-card" data-name="Slope" onclick="openGame('games/Slope.html')">
+    <div class="game-card" data-name="Slope" onclick="openGame('Slope.html')">
       <img src="gamephoto/slope.png" alt="Slope">
       <p>Slope</p>
-   </div>
-       <div class="game-card" data-name="sound Board" onclick="openGame('games/soundBoard.html')">
-      <img src="gamephoto/soundboard.png" alt="sound Board">
-      <p>Soun Board</p>
-   </div>
-  
-    <div class="game-card" data-name="Baldi's Basics" onclick="openGame('games/BaldisBasics.html')">
-    <img src="gamephoto/Baldisbasics.png" alt="Baldi's Basics">
-    <p>Baldi's Basics</p>
-       </div>
-    
-    <div class="game-card" data-name="Space Waves" onclick="openGame('games/SpaceWaves.html')">
+    </div>
+
+    <div class="game-card" data-name="Sound Board" onclick="openGame('soundBoard.html')">
+      <img src="gamephoto/soundboard.png" alt="Sound Board">
+      <p>Sound Board</p>
+    </div>
+
+    <div class="game-card" data-name="Baldi's Basics" onclick="openGame('BaldisBasics.html')">
+      <img src="gamephoto/Baldisbasics.png" alt="Baldi's Basics">
+      <p>Baldi's Basics</p>
+    </div>
+
+    <div class="game-card" data-name="Space Waves" onclick="openGame('SpaceWaves.html')">
       <img src="gamephoto/Spacewaves.png" alt="Space Waves">
       <p>Space Waves</p>
     </div>
 
+  </div>
+
   <script src="button.js"></script>
+  <script src="counter.js"></script>
 
   <script>
+    loadVisits();
+
     // Popup close
     document.getElementById("acceptBtn").addEventListener("click", () => {
       document.getElementById("popupOverlay").style.display = "none";
@@ -193,7 +229,7 @@
 
     // Game opener
     function openGame(url) {
-      window.location.href = url;
+      window.location.href = "games/" + url;
     }
   </script>
 
