@@ -1,2 +1,54 @@
-<button onclick="openGame('FlappyBird.html')">Flappy Bird</button>
-<script src="button.js"></script>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Totally Cool Math Games</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0d0d0d;
+      color: #00ff66;
+      text-align: center;
+      padding-top: 60px;
+    }
+
+    h1 {
+      color: #00ff66;
+      margin-bottom: 30px;
+      font-size: 40px;
+    }
+
+    .game-button {
+      background: #111;
+      border: 2px solid #00ff66;
+      color: #00ff66;
+      padding: 15px 30px;
+      margin: 12px;
+      font-size: 20px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: 0.2s ease-in-out;
+      display: inline-block;
+    }
+
+    .game-button:hover {
+      background: #00ff66;
+      color: #111;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Totally Cool Math Games</h1>
+
+  <!-- Add more buttons as you add more games -->
+  <button class="game-button" onclick="openGame('FlappyBird.html')">Flappy Bird</button>
+  <button class="game-button" onclick="openGame('Snake.html')">Snake</button>
+  <button class="game-button" onclick="openGame('Tetris.html')">Tetris</button>
+
+  <script src="button.js"></script>
+</body>
+</html>
