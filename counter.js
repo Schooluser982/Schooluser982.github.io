@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-  fetch("https://api.countapi.xyz/hit/schooluser982.github.io/site")
+  fetch("https://hits.sh/schooluser982.github.io.json")
     .then(res => res.json())
     .then(data => {
       const el = document.getElementById("visitCount");
-      if (el) el.innerText = data.value;
+      if (el) el.innerText = data.hits;
     })
     .catch(err => {
       const el = document.getElementById("visitCount");
