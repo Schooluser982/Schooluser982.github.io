@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Totally Cool Math Games</title>
+  <title>Google Classroom</title>
 
   <style>
     body {
@@ -15,8 +15,27 @@
 
     h1 {
       color: #00ff66;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       font-size: 40px;
+    }
+
+    /* Search bar styling */
+    #searchBar {
+      width: 60%;
+      padding: 12px;
+      font-size: 18px;
+      border: 2px solid #00ff66;
+      border-radius: 8px;
+      background: #111;
+      color: #00ff66;
+      margin-bottom: 25px;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    #searchBar:focus {
+      border-color: #00ffaa;
+      box-shadow: 0 0 10px #00ffaa;
     }
 
     .game-button {
@@ -37,6 +56,11 @@
       color: #111;
       transform: scale(1.05);
     }
+
+    /* Hidden class for search filtering */
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 
@@ -44,9 +68,32 @@
 
   <h1>Totally Cool Math Games</h1>
 
-  <!-- Add more buttons as you add more games -->
-  <button class="game-button" onclick="openGame('FlappyBird.html')">Flappy Bird</button>
-  <button class="game-button" onclick="openGame('InfiniteCraft.html')">Infinite Craft</button>
+  <!-- Search Bar -->
+  <input type="text" id="searchBar" placeholder="Search for a game...">
+
+  <!-- Game Buttons -->
+  <div id="gameList">
+    <button class="game-button" data-name="Flappy Bird" onclick="openGame('FlappyBird.html')">Flappy Bird</button>
+    <button class="game-button" data-name="Infinite Craft" onclick="openGame('InfiniteCraft.html')">Infinite Craft</button>
+    <!-- Add more buttons here -->
+  </div>
+
   <script src="button.js"></script>
+
+  <script>
+    // Live search filter
+    const searchBar = document.getElementById("searchBar");
+    const buttons = document.querySelectorAll(".game-button");
+
+    searchBar.addEventListener("input", () => {
+      const query = searchBar.value.toLowerCase();
+
+      buttons.forEach(btn => {
+        const name = btn.dataset.name.toLowerCase();
+        btn.classList.toggle("hidden", !name.includes(query));
+      });
+    });
+  </script>
+
 </body>
 </html>
