@@ -10,4 +10,4 @@ document.addEventListener("DOMContentLoaded", () => {
       if (el) el.innerText = "Error";
       console.error("Visit counter error:", err);
     });
-});
+})
