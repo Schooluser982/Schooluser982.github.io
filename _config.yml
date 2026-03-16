@@ -1,0 +1,14 @@
+title: Schooluser982
+description: My GitHub Pages site using the Hacker theme
+
+theme: jekyll-theme-hacker
+
+url: "https://schooluser982.github.io"
+baseurl: ""
+
+markdown: kramdown
+highlighter: rouge
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
