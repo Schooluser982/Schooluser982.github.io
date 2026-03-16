@@ -1,10 +1,18 @@
 function loadVisits() {
-  fetch("https://api.countapi.xyz/hit/schooluser982.github.io/visits")
+  fetch("https://api.countapi.xyz/hit/schooluser982.github.io/visits123")
     .then(res => res.json())
     .then(data => {
-      document.getElementById("visitCount").innerText = data.value;
+      const counter = document.getElementById("visitCount");
+      if (counter) {
+        counter.innerText = data.value;
+      }
     })
     .catch(() => {
-      document.getElementById("visitCount").innerText = "Error";
+      const counter = document.getElementById("visitCount");
+      if (counter) {
+        counter.innerText = "Error";
+      }
     });
 }
+
+document.addEventListener("DOMContentLoaded", loadVisits);
