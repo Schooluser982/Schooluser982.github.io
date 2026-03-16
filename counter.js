@@ -1,17 +1,14 @@
 function loadVisits() {
-  fetch("https://api.countapi.xyz/hit/schooluser982.github.io/visits123")
+  fetch("https://api.countapi.xyz/hit/schooluser982.github.io/site")
     .then(res => res.json())
     .then(data => {
-      const counter = document.getElementById("visitCount");
-      if (counter) {
-        counter.innerText = data.value;
-      }
+      const el = document.getElementById("visitCount");
+      if (el) el.innerText = data.value;
     })
-    .catch(() => {
-      const counter = document.getElementById("visitCount");
-      if (counter) {
-        counter.innerText = "Error";
-      }
+    .catch(err => {
+      const el = document.getElementById("visitCount");
+      if (el) el.innerText = "Error";
+      console.error("Visit counter error:", err);
     });
 }
 
