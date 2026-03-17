@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Trigger the counter increment
+  fetch("https://YOUR-WORKER-URL.workers.dev");
+
+  // Load the updated count
   fetch("https://raw.githubusercontent.com/Schooluser982/Schooluser982.github.io/main/visits.json")
     .then(res => res.json())
     .then(data => {
