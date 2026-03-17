@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Trigger the counter increment
-  fetch("https://YOUR-WORKER-URL.workers.dev");
+  fetch("https://counter-worker-sparkling-poetry-83b4.gamerroblox29g.workers.dev");
 
   // Load the updated count
   fetch("https://raw.githubusercontent.com/Schooluser982/Schooluser982.github.io/main/visits.json")
