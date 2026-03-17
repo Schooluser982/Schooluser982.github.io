@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Totally Cool Math Games</title>
+  <title>Home - Classroom</title>
   <link rel="icon" type="image/png" href="icons8-google-classroom-color-72.png">
 
   <style>
@@ -24,6 +24,7 @@
       border-bottom: 2px solid #00ff66;
       padding: 15px 0;
       box-shadow: 0 0 10px #00ff66;
+      z-index: 999;
     }
 
     nav a {
@@ -44,6 +45,7 @@
       margin-bottom: 10px;
     }
 
+    /* Search bar */
     #searchBar {
       width: 60%;
       padding: 12px;
@@ -62,6 +64,7 @@
       box-shadow: 0 0 10px #00ffaa;
     }
 
+    /* Game cards */
     .game-card {
       background: #111;
       border: 2px solid #00ff66;
@@ -182,6 +185,7 @@
   <script src="counter.js"></script>
 
   <script>
+    // Search filter
     const searchBar = document.getElementById("searchBar");
     const cards = document.querySelectorAll(".game-card");
 
@@ -193,6 +197,7 @@
       });
     });
 
+    // Open game
     function openGame(url) {
       window.location.href = "games/" + url;
     }
