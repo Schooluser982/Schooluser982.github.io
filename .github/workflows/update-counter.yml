@@ -2,8 +2,11 @@ name: Update Visit Counter
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "*/5 * * * *"
+    inputs:
+      trigger:
+        description: "Increment counter"
+        required: true
+        default: "yes"
 
 jobs:
   update:
