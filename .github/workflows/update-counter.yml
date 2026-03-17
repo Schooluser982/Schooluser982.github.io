@@ -1,0 +1,37 @@
+name: Update Visit Counter
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/5 * * * *"
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Read visits.json
+        id: readjson
+        run: |
+          count=$(jq '.count' visits.json)
+          echo "count=$count" >> $GITHUB_OUTPUT
+
+      - name: Increment count
+        id: increment
+        run: |
+          newcount=$(( ${{ steps.readjson.outputs.count }} + 1 ))
+          echo "newcount=$newcount" >> $GITHUB_OUTPUT
+
+      - name: Write updated visits.json
+        run: |
+          echo "{ \"count\": ${{ steps.increment.outputs.newcount }} }" > visits.json
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add visits.json
+          git commit -m "Update visit count" || echo "No changes"
+          git push
