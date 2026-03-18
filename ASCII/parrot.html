@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Parrot Runner</title>
+<title>ASCII Parrot Screen Saver</title>
 <style>
   body {
     background: black;
@@ -239,31 +239,20 @@ cNd.........................................;lOc`,
 </script>
 
 <script>
-<script>
 // ---------------- PLAYER SCRIPT ----------------
 const screen = document.getElementById("screen");
 let index = 0;
 const fps = 12;
 const interval = 1000 / fps;
 
-// Colors to cycle through each frame
-const colors = [
-  "#00ff00",
-  "#ff00ff",
-  "#00ffff",
-  "#ffff00",
-  "#ff8800",
-  "#ff4444",
-  "#44ff44",
-  "#4488ff"
-];
-
 function play() {
   screen.textContent = frames[index];
-  screen.style.color = colors[index % colors.length];
   index = (index + 1) % frames.length;
 }
 
 setInterval(play, interval);
 // ---------------- END PLAYER -------------------
 </script>
+
+</body>
+</html>
