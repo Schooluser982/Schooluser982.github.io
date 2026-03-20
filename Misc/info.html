@@ -21,6 +21,7 @@
       border-bottom: 2px solid #00ff66;
       padding: 15px 0;
       box-shadow: 0 0 10px #00ff66;
+      z-index: 999;
     }
 
     nav a {
@@ -44,13 +45,33 @@
 
 <body>
 
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="creators.html">Creators</a>
-    <a href="info.html">Info</a>
-    <a href="sub.html">Game Submission Form</a>
-    <a href="CodeEditor.html">Code Editor</a>
-  </nav>
+  <!-- NAVIGATION -->
+  <nav id="navbar"></nav>
+
+  <script>
+    const navFiles = [
+      "index.html",
+      "creators.html",
+      "info.html",
+      "sub.html",
+      "CodeEditor.html"
+    ];
+
+    const navContainer = document.getElementById("navbar");
+
+    navFiles.forEach(file => {
+      fetch("Misc/" + file)
+        .then(res => res.text())
+        .then(html => {
+          const temp = document.createElement("div");
+          temp.innerHTML = html;
+
+          const link = temp.querySelector("a");
+          if (link) navContainer.appendChild(link);
+        })
+        .catch(err => console.error("Failed to load:", file, err));
+    });
+  </script>
 
   <h1>Info</h1>
   <p>This site hosts games for educational purposes.</p>
@@ -58,3 +79,4 @@
 
 </body>
 </html>
+
