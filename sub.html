@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Game Submission Form</title>
+  <title>Sub Form</title>
 
   <style>
     body {
@@ -21,7 +21,6 @@
       border-bottom: 2px solid #00ff66;
       padding: 15px 0;
       box-shadow: 0 0 10px #00ff66;
-      z-index: 999;
     }
 
     nav a {
@@ -45,37 +44,16 @@
 
 <body>
 
-  <!-- NAVIGATION -->
-  <nav id="navbar"></nav>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="creators.html">Creators</a>
+    <a href="info.html">Info</a>
+    <a href="sub.html">Game Submission Form</a>
+    <a href="CodeEditor.html">Code Editor</a>
+  </nav>
 
-  <script>
-    const navFiles = [
-      "index.html",
-      "creators.html",
-      "info.html",
-      "sub.html",
-      "CodeEditor.html"
-    ];
-
-    const navContainer = document.getElementById("navbar");
-
-    navFiles.forEach(file => {
-      fetch("Misc/" + file)
-        .then(res => res.text())
-        .then(html => {
-          const temp = document.createElement("div");
-          temp.innerHTML = html;
-
-          const link = temp.querySelector("a");
-          if (link) navContainer.appendChild(link);
-        })
-        .catch(err => console.error("Failed to load:", file, err));
-    });
-  </script>
-
-  <h1>Game Submission Form</h1>
+  <h1>Game Submission form</h1>
   <p>https://forms.gle/axJnhPGRRzpdkMKm7</p>
 
 </body>
 </html>
-
