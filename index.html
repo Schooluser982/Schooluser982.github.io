@@ -171,37 +171,19 @@
     </div>
   </div>
 
-  <!-- NAVIGATION (Loaded from Misc folder) -->
-  <nav id="navbar"></nav>
-
-  <script>
-    const navFiles = [
-      "index.html",
-      "creators.html",
-      "info.html",
-      "sub.html",
-      "CodeEditor.html"
-    ];
-
-    const navContainer = document.getElementById("navbar");
-
-    navFiles.forEach(file => {
-      fetch("Misc/" + file)
-        .then(res => res.text())
-        .then(html => {
-          const temp = document.createElement("div");
-          temp.innerHTML = html;
-
-          const link = temp.querySelector("a");
-          if (link) navContainer.appendChild(link);
-        })
-        .catch(err => console.error("Failed to load:", file, err));
-    });
-  </script>
-
+  <!-- NAVIGATION -->
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="creators.html">Creators</a>
+    <a href="info.html">Info</a>
+    <a href="sub.html">Game Submission form</a>
+    <a href="CodeEditor.html">Code Editor</a>
+  </nav>
+  
   <img src="gamephoto/Websiteimage.png">
   <h1>Totally Cool Math Games</h1>
   <pre>Repo: https://github.com/Schooluser982/Schooluser982.github.io/</pre>
+  
 
   <!-- Visit Counter -->
   <div id="visitCounterBox">
@@ -263,37 +245,30 @@
       <img src="gamephoto/Spacebar.png">
       <p>Spacebar Clicker</p>
     </div>
-
     <div class="game-card" data-name="Parrot" onclick="openGame('parrot.html')">
       <img src="gamephoto/Parrot.jpeg">
       <p>Parrot Screen Saver</p>
     </div>
-
     <div class="game-card" data-name="Cookie Clicker" onclick="openGame('Cookie.html')">
       <img src="gamephoto/Cookie.webp">
       <p>Capybara Clicker</p>
     </div>
-
     <div class="game-card" data-name="Subway" onclick="openGame('Subway.html')">
       <img src="gamephoto/Subway.jpeg">
       <p>Subway Surfers</p>
     </div>
-
     <div class="game-card" data-name="GeometryDashLite" onclick="openGame('GeometryDashLite.html')">
       <img src="gamephoto/GeometryDashLite.png">
       <p>Geometry Dash (takes time to load ~25 seconds)</p>
     </div>
-
     <div class="game-card" data-name="Bitlife" onclick="openGame('Bitlife.html')">
       <img src="gamephoto/Bitlife.png">
       <p>Bitlife</p>
     </div>
-
     <div class="game-card" data-name="Slope3" onclick="openGame('Slope3.html')">
       <img src="gamephoto/Slope3.jpeg">
       <p>Slope 3</p>
-    </div>
-
+    </div>    
   </div>
 
   <script src="counter.js"></script>
@@ -316,7 +291,7 @@
       });
     });
 
-    // Multi-folder openGame logic
+    // NEW multi-folder openGame logic
     function openGame(file) {
       const paths = [
         "games/" + file,
