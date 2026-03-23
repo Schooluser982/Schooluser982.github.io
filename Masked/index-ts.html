@@ -5,12 +5,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Masked Forces Unlimited</title>
 
-    <!-- Keep your local TemplateData folder -->
     <link rel="stylesheet" href="TemplateData/style.css">
     <script src="TemplateData/UnityProgress.js"></script>
 
-    <!-- Load UnityLoader.js from the external GitHub repo -->
-    <script src="https://raw.githubusercontent.com/maskedforcesunlimited/maskedforcesunlimited.github.io/main/Build/UnityLoader.js"></script>
+    <!-- Load UnityLoader.js from GitHub Pages (NOT raw.githubusercontent.com) -->
+    <script src="https://maskedforcesunlimited.github.io/Build/UnityLoader.js"></script>
 
     <style>
       html, body {
@@ -29,7 +28,7 @@
     <script>
       var gameInstance = UnityLoader.instantiate(
         "gameContainer",
-        "https://raw.githubusercontent.com/maskedforcesunlimited/maskedforcesunlimited.github.io/main/Build/masked-forces-unlimited.json",
+        "https://maskedforcesunlimited.github.io/Build/masked-forces-unlimited.json",
         { onProgress: UnityProgress }
       );
     </script>
