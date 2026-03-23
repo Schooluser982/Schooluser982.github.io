@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Frame Template</title>
+<style>
+  body {
+    background: black;
+    color: #00ff00;
+    font-family: monospace;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+pre {
+  font-size: 28px;
+  line-height: 28px;
+  white-space: pre;
+}
+
+#screen {
+  margin-top: 150px;
+}
+#title{
+  position: fixed;
+  top: 10px;
+  left: 20px;
+  font-size: 28px;
+  line-height: 28px;
+  color: #00ff00;
+  white-space: pre;
+}
+</style>
+</head>
+<body>
+<pre id="screen"></pre>
+
+<script>
+// ------------------ FRAMES ------------------
+const frames = [
+  `FRAME 1`
+
+];
+
+
+
+// ---------------- END FRAMES ------------------
+</script>
+
+<script>
+// ---------------- PLAYER SCRIPT ----------------
+const screen = document.getElementById("screen");
+let index = 0;
+const fps = 12;
+const interval = 1000 / fps;
+
+function play() {
+  screen.textContent = frames[index];
+  index = (index + 1) % frames.length;
+}
+
+setInterval(play, interval);
+// ---------------- END PLAYER -------------------
+</script>
+
+</body>
+</html>
