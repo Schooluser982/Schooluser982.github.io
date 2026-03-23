@@ -1,0 +1,22 @@
+<script>
+  // List of banned Gmail accounts
+  const bannedEmails = [
+    "alextorres@hak12.org"
+  ];
+
+  function checkEmail() {
+    const email = document.getElementById("email").value.trim().toLowerCase();
+
+    if (bannedEmails.includes(email)) {
+      alert("This email is banned from using this site.");
+      return false; // Prevent form submission
+    }
+
+    return true;
+  }
+</script>
+
+<form onsubmit="return checkEmail()">
+  <input type="email" id="email" required>
+  <button type="submit">Submit</button>
+</form>
