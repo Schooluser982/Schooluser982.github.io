@@ -392,43 +392,7 @@
   <script src="counter.js"></script>
 
   <script>
-    // PASSWORD SYSTEM - NEON POPUP
-const categoryPasswords = {
-  "STAFF": "56897"
-};
 
-let currentCategory = null;
-
-function handleCategoryClick(category) {
-  if (!categoryPasswords[category]) {
-    filterCategory(category);
-    return;
-  }
-
-  currentCategory = category;
-
-  document.getElementById("passwordTitle").innerText = "Enter Password for " + category;
-  document.getElementById("passwordOverlay").style.display = "flex";
-  document.getElementById("passwordInput").value = "";
-  document.getElementById("passwordError").style.display = "none";
-}
-
-// Unlock button
-document.getElementById("passwordSubmit").onclick = () => {
-  const input = document.getElementById("passwordInput").value;
-
-  if (input === categoryPasswords[currentCategory]) {
-    document.getElementById("passwordOverlay").style.display = "none";
-    filterCategory(currentCategory);
-  } else {
-    document.getElementById("passwordError").style.display = "block";
-  }
-};
-
-// Cancel button
-document.getElementById("passwordCancel").onclick = () => {
-  document.getElementById("passwordOverlay").style.display = "none";
-};
     
     // Popup close
     document.getElementById("acceptBtn").addEventListener("click", () => {
@@ -471,6 +435,43 @@ document.getElementById("passwordCancel").onclick = () => {
         card.classList.toggle("hidden", !(matchesSearch && matchesCategory));
       });
     }
+
+    // PASSWORD SYSTEM - NEON POPUP
+const categoryPasswords = {
+  "STAFF": "56897"
+};
+
+let currentCategory = null;
+
+function handleCategoryClick(category) {
+  if (!categoryPasswords[category]) {
+    filterCategory(category);
+    return;
+  }
+
+  currentCategory = category;
+  document.getElementById("passwordTitle").innerText = "Enter Password for " + category;
+  document.getElementById("passwordOverlay").style.display = "flex";
+  document.getElementById("passwordInput").value = "";
+  document.getElementById("passwordError").style.display = "none";
+}
+
+// Unlock button
+document.getElementById("passwordSubmit").onclick = () => {
+  const input = document.getElementById("passwordInput").value;
+
+  if (input === categoryPasswords[currentCategory]) {
+    document.getElementById("passwordOverlay").style.display = "none";
+    filterCategory(currentCategory);
+  } else {
+    document.getElementById("passwordError").style.display = "block";
+  }
+};
+
+// Cancel button
+document.getElementById("passwordCancel").onclick = () => {
+  document.getElementById("passwordOverlay").style.display = "none";
+};
 
     // Multi-folder openGame logic
     function openGame(file) {
