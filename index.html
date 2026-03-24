@@ -10,10 +10,11 @@
       font-family: Arial, sans-serif;
       background: #0d0d0d;
       color: #00ff66;
-      text-align: center;
-      padding-top: 80px;
+      margin: 0;
+      padding: 0;
     }
 
+    /* NAVIGATION */
     nav {
       position: fixed;
       top: 0;
@@ -24,6 +25,7 @@
       padding: 15px 0;
       box-shadow: 0 0 10px #00ff66;
       z-index: 999;
+      text-align: center;
     }
 
     nav a {
@@ -39,9 +41,50 @@
       text-shadow: 0 0 10px #00ffaa;
     }
 
-    h1 {
-      font-size: 40px;
-      margin-bottom: 10px;
+    /* SIDEBAR */
+    #sidebar {
+      position: fixed;
+      top: 70px;
+      left: 0;
+      width: 220px;
+      height: calc(100% - 70px);
+      background: #111;
+      border-right: 2px solid #00ff66;
+      padding: 20px;
+      box-shadow: 0 0 10px #00ff66;
+      overflow-y: auto;
+    }
+
+    #sidebar h2 {
+      margin-top: 0;
+      color: #00ff66;
+      text-align: center;
+    }
+
+    #sidebar button {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      background: #111;
+      border: 2px solid #00ff66;
+      color: #00ff66;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 16px;
+    }
+
+    #sidebar button:hover {
+      background: #00ff66;
+      color: #111;
+      transform: scale(1.05);
+    }
+
+    /* MAIN CONTENT */
+    #mainContent {
+      margin-left: 240px;
+      padding-top: 100px;
+      text-align: center;
     }
 
     #searchBar {
@@ -92,30 +135,7 @@
       display: none;
     }
 
-    #visitCounterBox {
-      margin: 20px auto;
-      padding: 15px 25px;
-      width: fit-content;
-      background: #111;
-      border: 2px solid #00ff66;
-      border-radius: 10px;
-      color: #00ff66;
-      font-size: 20px;
-      box-shadow: 0 0 12px #00ff66;
-      transition: 0.2s;
-    }
-
-    #visitCounterBox:hover {
-      transform: scale(1.05);
-      border-color: #00ffaa;
-      box-shadow: 0 0 15px #00ffaa;
-    }
-
-    #visitCount {
-      font-weight: bold;
-      color: #00ffaa;
-    }
-
+    /* POPUP */
     #popupOverlay {
       position: fixed;
       top: 0;
@@ -179,111 +199,123 @@
     <a href="sub.html">Game Submission form</a>
     <a href="CodeEditor.html">Code Editor</a>
   </nav>
-  
-  <img src="gamephoto/Websiteimage.png">
-  <h1>Totally Cool Math Games</h1>
-  <pre>Repo: https://github.com/Schooluser982/Schooluser982.github.io/</pre>
-  
 
-  <!-- Visit Counter -->
-  <div id="visitCounterBox">
-    <p>Total Visits: <span id="visitCount">Loading...</span></p>
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <h2>Categories</h2>
+    <button onclick="filterCategory('All')">All Games</button>
+    <button onclick="filterCategory('Arcade')">Arcade</button>
+    <button onclick="filterCategory('Sandbox')">Sandbox</button>
+    <button onclick="filterCategory('Runner')">Runner</button>
+    <button onclick="filterCategory('Clicker')">Clicker</button>
+    <button onclick="filterCategory('Rhythm')">Rhythm</button>
+    <button onclick="filterCategory('Shooter')">Shooter</button>
+    <button onclick="filterCategory('Action')">Action</button>
+    <button onclick="filterCategory('Horror')">Horror</button>
+    <button onclick="filterCategory('Simulation')">Simulation</button>
+    <button onclick="filterCategory('Racing')">Racing</button>
+    <button onclick="filterCategory('Screensaver')">Screensaver</button>
+    <button onclick="filterCategory('Misc')">Misc</button>
   </div>
 
-  <!-- Search Bar -->
-  <input type="text" id="searchBar" placeholder="Search for a game...">
+  <!-- MAIN CONTENT -->
+  <div id="mainContent">
 
-  <!-- Game List -->
-  <div id="gameslist">
+    <img src="gamephoto/Websiteimage.png">
+    <h1>Totally Cool Math Games</h1>
+    <pre>Repo: https://github.com/Schooluser982/Schooluser982.github.io/</pre>
 
-    <div class="game-card" data-name="Flappy Bird" onclick="openGame('FlappyBird.html')">
-      <img src="gamephoto/flappybird.png">
-      <p>Flappy Bird</p>
-    </div>
-
-    <div class="game-card" data-name="Infinite Craft" onclick="openGame('InfiniteCraft.html')">
-      <img src="gamephoto/infinitecraft.png">
-      <p>Infinite Craft</p>
+    <!-- Visit Counter -->
+    <div id="visitCounterBox">
+      <p>Total Visits: <span id="visitCount">Loading...</span></p>
     </div>
 
-    <div class="game-card" data-name="Sky Rider" onclick="openGame('SkyRiders.html')">
-      <img src="gamephoto/skyrider.png">
-      <p>Sky Rider</p>
-    </div>
+    <!-- Search Bar -->
+    <input type="text" id="searchBar" placeholder="Search for a game...">
 
-    <div class="game-card" data-name="Slope" onclick="openGame('Slope.html')">
-      <img src="gamephoto/slope.png">
-      <p>Slope</p>
-    </div>
+    <!-- Game List -->
+    <div id="gameslist">
 
-    <div class="game-card" data-name="Sound Board" onclick="openGame('soundBoard.html')">
-      <img src="gamephoto/soundboard.png">
-      <p>Sound Board</p>
-    </div>
+      <div class="game-card" data-name="Flappy Bird" data-category="Arcade" onclick="openGame('FlappyBird.html')">
+        <img src="gamephoto/flappybird.png"><p>Flappy Bird</p>
+      </div>
 
-    <div class="game-card" data-name="Baldi's Basics" onclick="openGame('BaldisBasics.html')">
-      <img src="gamephoto/Baldisbasics.png">
-      <p>Baldi's Basics</p>
-    </div>
+      <div class="game-card" data-name="Infinite Craft" data-category="Sandbox" onclick="openGame('InfiniteCraft.html')">
+        <img src="gamephoto/infinitecraft.png"><p>Infinite Craft</p>
+      </div>
 
-    <div class="game-card" data-name="Space Waves" onclick="openGame('SpaceWaves.html')">
-      <img src="gamephoto/Spacewaves.png">
-      <p>Space Waves</p>
-    </div>
+      <div class="game-card" data-name="Sky Rider" data-category="Arcade" onclick="openGame('SkyRiders.html')">
+        <img src="gamephoto/skyrider.png"><p>Sky Rider</p>
+      </div>
 
-    <div class="game-card" data-name="1v1 lol" onclick="openGame('1v1lol.html')">
-      <img src="gamephoto/1v1lol.png">
-      <p>1v1 lol</p>
-    </div>
+      <div class="game-card" data-name="Slope" data-category="Runner" onclick="openGame('Slope.html')">
+        <img src="gamephoto/slope.png"><p>Slope</p>
+      </div>
 
-    <div class="game-card" data-name="Brotato" onclick="openGame('Bro.html')">
-      <img src="gamephoto/Bro.png">
-      <p>Brotato</p>
-    </div>
+      <div class="game-card" data-name="Sound Board" data-category="Misc" onclick="openGame('soundBoard.html')">
+        <img src="gamephoto/soundboard.png"><p>Sound Board</p>
+      </div>
 
-    <div class="game-card" data-name="Spacebar Clicker" onclick="openGame('spacebar-clicker/index.html')">
-      <img src="gamephoto/Spacebar.png">
-      <p>Spacebar Clicker</p>
-    </div>
-    <div class="game-card" data-name="Parrot" onclick="openGame('parrot.html')">
-      <img src="gamephoto/Parrot.jpeg">
-      <p>Parrot Screen Saver</p>
-    </div>
-    <div class="game-card" data-name="Cookie Clicker" onclick="openGame('Cookie.html')">
-      <img src="gamephoto/Cookie.webp">
-      <p>Capybara Clicker</p>
-    </div>
-    <div class="game-card" data-name="Subway" onclick="openGame('Subway.html')">
-      <img src="gamephoto/Subway.jpeg">
-      <p>Subway Surfers</p>
-    </div>
-    <div class="game-card" data-name="GeometryDashLite" onclick="openGame('GeometryDashLite.html')">
-      <img src="gamephoto/GeometryDashLite.png">
-      <p>Geometry Dash (takes time to load ~25 seconds)</p>
-    </div>
-    <div class="game-card" data-name="Bitlife" onclick="openGame('Bitlife.html')">
-      <img src="gamephoto/Bitlife.png">
-      <p>Bitlife</p>
-    </div>
-    <div class="game-card" data-name="Slope3" onclick="openGame('Slope3.html')">
-      <img src="gamephoto/Slope3.jpeg">
-      <p>Slope 3</p>
-    </div>
-    <div class="game-card" data-name="Rick Roll" onclick="openGame('Rick Roll.html')">
-      <img src="gamephoto/RickRoll.jpeg">
-      <p>Rick Roll Screen Saver</p>
-    </div>
-    <div class="game-card" data-name="Masked" onclick="openGame('Masked.html')">
-      <img src="gamephoto/Masked.jpeg">
-      <p>Masked Ultimate (Takes around ~30 seconds to load)</p>
-    </div>
-    <div class="game-card" data-name="Drift" onclick="openGame('Drift.html')">
-      <img src="gamephoto/Drift.jpeg">
-      <p>Drift Hunters</p>
-    </div>
-    <div class="game-card" data-name="EddCar" onclick="openGame('EddCar.html')">
-      <img src="gamephoto/eddCar.jpeg">
-      <p>Eddie's Car Simulator</p>
+      <div class="game-card" data-name="Baldi's Basics" data-category="Horror" onclick="openGame('BaldisBasics.html')">
+        <img src="gamephoto/Baldisbasics.png"><p>Baldi's Basics</p>
+      </div>
+
+      <div class="game-card" data-name="Space Waves" data-category="Rhythm" onclick="openGame('SpaceWaves.html')">
+        <img src="gamephoto/Spacewaves.png"><p>Space Waves</p>
+      </div>
+
+      <div class="game-card" data-name="1v1 lol" data-category="Fighting" onclick="openGame('1v1lol.html')">
+        <img src="gamephoto/1v1lol.png"><p>1v1 lol</p>
+      </div>
+
+      <div class="game-card" data-name="Brotato" data-category="Action" onclick="openGame('Bro.html')">
+        <img src="gamephoto/Bro.png"><p>Brotato</p>
+      </div>
+
+      <div class="game-card" data-name="Spacebar Clicker" data-category="Clicker" onclick="openGame('spacebar-clicker/index.html')">
+        <img src="gamephoto/Spacebar.png"><p>Spacebar Clicker</p>
+      </div>
+
+      <div class="game-card" data-name="Parrot" data-category="Screensaver" onclick="openGame('parrot.html')">
+        <img src="gamephoto/Parrot.jpeg"><p>Parrot Screen Saver</p>
+      </div>
+
+      <div class="game-card" data-name="Cookie Clicker" data-category="Clicker" onclick="openGame('Cookie.html')">
+        <img src="gamephoto/Cookie.webp"><p>Capybara Clicker</p>
+      </div>
+
+      <div class="game-card" data-name="Subway" data-category="Runner" onclick="openGame('Subway.html')">
+        <img src="gamephoto/Subway.jpeg"><p>Subway Surfers</p>
+      </div>
+
+      <div class="game-card" data-name="GeometryDashLite" data-category="Rhythm" onclick="openGame('GeometryDashLite.html')">
+        <img src="gamephoto/GeometryDashLite.png"><p>Geometry Dash Lite</p>
+      </div>
+
+      <div class="game-card" data-name="Bitlife" data-category="Simulation" onclick="openGame('Bitlife.html')">
+        <img src="gamephoto/Bitlife.png"><p>Bitlife</p>
+      </div>
+
+      <div class="game-card" data-name="Slope3" data-category="Runner" onclick="openGame('Slope3.html')">
+        <img src="gamephoto/Slope3.jpeg"><p>Slope 3</p>
+      </div>
+
+      <div class="game-card" data-name="Rick Roll" data-category="Screensaver" onclick="openGame('Rick Roll.html')">
+        <img src="gamephoto/RickRoll.jpeg"><p>Rick Roll Screen Saver</p>
+      </div>
+
+      <div class="game-card" data-name="Masked" data-category="Fighting" onclick="openGame('Masked.html')">
+        <img src="gamephoto/Masked.jpeg"><p>Masked Ultimate</p>
+      </div>
+
+      <div class="game-card" data-name="Drift" data-category="Racing" onclick="openGame('Drift.html')">
+        <img src="gamephoto/Drift.jpeg"><p>Drift Hunters</p>
+      </div>
+
+      <div class="game-card" data-name="EddCar" data-category="Racing" onclick="openGame('EddCar.html')">
+        <img src="gamephoto/eddCar.jpeg"><p>Eddie's Car Simulator</p>
+      </div>
+
     </div>
   </div>
 
@@ -303,11 +335,36 @@
       const query = searchBar.value.toLowerCase();
       cards.forEach(card => {
         const name = card.dataset.name.toLowerCase();
-        card.classList.toggle("hidden", !name.includes(query));
+        const matchesSearch = name.includes(query);
+
+        // Keep category filtering active
+        const matchesCategory = !card.classList.contains("category-hidden");
+
+        card.classList.toggle("hidden", !(matchesSearch && matchesCategory));
       });
     });
 
-    // NEW multi-folder openGame logic
+    // Category filter
+    function filterCategory(category) {
+      cards.forEach(card => {
+        const gameCategory = card.dataset.category;
+
+        if (category === "All" || gameCategory === category) {
+          card.classList.remove("category-hidden");
+        } else {
+          card.classList.add("category-hidden");
+        }
+
+        // Reapply search filter
+        const name = card.dataset.name.toLowerCase();
+        const matchesSearch = name.includes(searchBar.value.toLowerCase());
+        const matchesCategory = !card.classList.contains("category-hidden");
+
+        card.classList.toggle("hidden", !(matchesSearch && matchesCategory));
+      });
+    }
+
+    // Multi-folder openGame logic
     function openGame(file) {
       const paths = [
         "games/" + file,
