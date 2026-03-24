@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Home - Classroom</title>
-  <link rel="icon" type="image/png" href="icons8-google-classroom-color-72.png">
+  /png" href="icons8-google-classroom-color-72.png">
 
   <style>
     body {
@@ -179,67 +179,67 @@
 
     /* PASSWORD POPUP */
     #passwordOverlay {
-       position: fixed;
-       top: 0;
-       left: 0;
-       width: 100%;
-       height: 100%;
-       background: rgba(0,0,0,0.9);
-       display: flex;
-       justify-content: center;
-       align-items: center;
-       z-index: 3000;
-  }
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 3000;
+    }
 
-#passwordBox {
-  background: #111;
-  border: 2px solid #00ff66;
-  padding: 30px;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 0 20px #00ff66;
-  width: 320px;
-}
+    #passwordBox {
+      background: #111;
+      border: 2px solid #00ff66;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 0 20px #00ff66;
+      width: 320px;
+    }
 
-#passwordBox h2 {
-  margin-top: 0;
-}
+    #passwordBox h2 {
+      margin-top: 0;
+    }
 
-#passwordInput {
-  width: 90%;
-  padding: 10px;
-  background: #0d0d0d;
-  border: 2px solid #00ff66;
-  color: #00ff66;
-  border-radius: 8px;
-  outline: none;
-}
+    #passwordInput {
+      width: 90%;
+      padding: 10px;
+      background: #0d0d0d;
+      border: 2px solid #00ff66;
+      color: #00ff66;
+      border-radius: 8px;
+      outline: none;
+    }
 
-#passwordInput:focus {
-  box-shadow: 0 0 10px #00ffaa;
-}
+    #passwordInput:focus {
+      box-shadow: 0 0 10px #00ffaa;
+    }
 
-#passwordSubmit, #passwordCancel {
-  margin: 5px;
-  padding: 10px 15px;
-  background: #111;
-  border: 2px solid #00ff66;
-  color: #00ff66;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-}
+    #passwordSubmit, #passwordCancel {
+      margin: 5px;
+      padding: 10px 15px;
+      background: #111;
+      border: 2px solid #00ff66;
+      color: #00ff66;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-#passwordSubmit:hover {
-  background: #00ff66;
-  color: #111;
-}
+    #passwordSubmit:hover {
+      background: #00ff66;
+      color: #111;
+    }
 
-#passwordCancel:hover {
-  background: red;
-  border-color: red;
-  color: white;
-}
+    #passwordCancel:hover {
+      background: red;
+      border-color: red;
+      color: white;
+    }
   </style>
 </head>
 
@@ -382,192 +382,125 @@
         <img src="gamephoto/eddCar.jpeg"><p>Eddie's Car Simulator</p>
       </div>
 
-    </div>
-
       <div class="game-card" data-name="Driftboss" data-category="Drift" onclick="openGame('Driftboss.html')">
         <img src="gamephoto/Driftboss.jpeg"><p>Drift Boss</p>
       </div>
- </div>
+
+    </div>
+  </div>
+
+  <!-- PASSWORD POPUP -->
+  <div id="passwordOverlay">
+    <div id="passwordBox">
+      <h2 id="passwordTitle">Enter Password</h2>
+      <input type="password" id="passwordInput" placeholder="Enter password...">
+      <div style="margin-top:15px;">
+        <button id="passwordSubmit">Unlock</button>
+        <button id="passwordCancel">Cancel</button>
+      </div>
+      <p id="passwordError" style="color:red; display:none;">Wrong password</p>
+    </div>
+  </div>
 
   <script src="counter.js"></script>
 
   <script>
-
-    
-    // Popup close
-    document.getElementById("acceptBtn").addEventListener("click", () => {
-      document.getElementById("popupOverlay").style.display = "none";
-    });
-
-    // Search filter
-    const searchBar = document.getElementById("searchBar");
-    const cards = document.querySelectorAll(".game-card");
-
-    searchBar.addEventListener("input", () => {
-      const query = searchBar.value.toLowerCase();
-      cards.forEach(card => {
-        const name = card.dataset.name.toLowerCase();
-        const matchesSearch = name.includes(query);
-
-        // Keep category filtering active
-        const matchesCategory = !card.classList.contains("category-hidden");
-
-        card.classList.toggle("hidden", !(matchesSearch && matchesCategory));
+    document.addEventListener("DOMContentLoaded", () => {
+      // Popup close
+      document.getElementById("acceptBtn").addEventListener("click", () => {
+        document.getElementById("popupOverlay").style.display = "none";
       });
-    });
 
-    // Category filter
-    function filterCategory(category) {
-      cards.forEach(card => {
-        const gameCategory = card.dataset.category;
+      // Search filter
+      const searchBar = document.getElementById("searchBar");
+      const cards = document.querySelectorAll(".game-card");
 
-        if (category === "All" || gameCategory === category) {
-          card.classList.remove("category-hidden");
-        } else {
-          card.classList.add("category-hidden");
-        }
-
-        // Reapply search filter
-        const name = card.dataset.name.toLowerCase();
-        const matchesSearch = name.includes(searchBar.value.toLowerCase());
-        const matchesCategory = !card.classList.contains("category-hidden");
-
-        card.classList.toggle("hidden", !(matchesSearch && matchesCategory));
+      searchBar.addEventListener("input", () => {
+        const query = searchBar.value.toLowerCase();
+        cards.forEach(card => {
+          const name = card.dataset.name.toLowerCase();
+          const matchesSearch = name.includes(query);
+          const matchesCategory = !card.classList.contains("category-hidden");
+          card.classList.toggle("hidden", !(matchesSearch && matchesCategory));
+        });
       });
-    }
 
-    // Multi-folder openGame logic
-    function openGame(file) {
-      const paths = [
-        "games/" + file,
-        "ASCII/" + file,
-        "spacebar-clicker/" + file,
-        "Masked/" + file,
-        "Misc/" + file,
-        file
-      ];
-
-      for (let path of paths) {
-        fetch(path)
-          .then(res => {
-            if (res.ok) {
-              window.location.href = path;
-            }
-          })
-          .catch(() => {});
-      }
-    }
-    <script>
-document.addEventListener("DOMContentLoaded", () => {
-  // Popup close
-  document.getElementById("acceptBtn").addEventListener("click", () => {
-    document.getElementById("popupOverlay").style.display = "none";
-  });
-
-  // Search filter
-  const searchBar = document.getElementById("searchBar");
-  const cards = document.querySelectorAll(".game-card");
-
-  searchBar.addEventListener("input", () => {
-    const query = searchBar.value.toLowerCase();
-    cards.forEach(card => {
-      const name = card.dataset.name.toLowerCase();
-      const matchesSearch = name.includes(query);
-      const matchesCategory = !card.classList.contains("category-hidden");
-      card.classList.toggle("hidden", !(matchesSearch && matchesCategory));
-    });
-  });
-
-  // Category filter
-  function filterCategory(category) {
-    cards.forEach(card => {
-      const gameCategory = card.dataset.category;
-      if (category === "All" || gameCategory === category) {
-        card.classList.remove("category-hidden");
-      } else {
-        card.classList.add("category-hidden");
-      }
-
-      const name = card.dataset.name.toLowerCase();
-      const matchesSearch = name.includes(searchBar.value.toLowerCase());
-      const matchesCategory = !card.classList.contains("category-hidden");
-      card.classList.toggle("hidden", !(matchesSearch && matchesCategory));
-    });
-  }
-
-  // Multi-folder openGame logic
-  function openGame(file) {
-    const paths = [
-      "games/" + file,
-      "ASCII/" + file,
-      "spacebar-clicker/" + file,
-      "Masked/" + file,
-      "Misc/" + file,
-      file
-    ];
-
-    for (let path of paths) {
-      fetch(path)
-        .then(res => {
-          if (res.ok) {
-            window.location.href = path;
+      // Category filter
+      function filterCategory(category) {
+        cards.forEach(card => {
+          const gameCategory = card.dataset.category;
+          if (category === "All" || gameCategory === category) {
+            card.classList.remove("category-hidden");
+          } else {
+            card.classList.add("category-hidden");
           }
-        })
-        .catch(() => {});
-    }
-  }
 
-  // PASSWORD SYSTEM
-  const categoryPasswords = { "STAFF": "56897" };
-  let currentCategory = null;
+          const name = card.dataset.name.toLowerCase();
+          const matchesSearch = name.includes(searchBar.value.toLowerCase());
+          const matchesCategory = !card.classList.contains("category-hidden");
+          card.classList.toggle("hidden", !(matchesSearch && matchesCategory));
+        });
+      }
 
-  function handleCategoryClick(category) {
-    if (!categoryPasswords[category]) {
-      filterCategory(category);
-      return;
-    }
-    currentCategory = category;
-    document.getElementById("passwordTitle").innerText = "Enter Password for " + category;
-    document.getElementById("passwordOverlay").style.display = "flex";
-    document.getElementById("passwordInput").value = "";
-    document.getElementById("passwordError").style.display = "none";
-  }
+      // Multi-folder openGame logic
+      function openGame(file) {
+        const paths = [
+          "games/" + file,
+          "ASCII/" + file,
+          "spacebar-clicker/" + file,
+          "Masked/" + file,
+          "Misc/" + file,
+          file
+        ];
 
-  // Unlock button
-  document.getElementById("passwordSubmit").onclick = () => {
-    const input = document.getElementById("passwordInput").value;
-    if (input === categoryPasswords[currentCategory]) {
-      document.getElementById("passwordOverlay").style.display = "none";
-      filterCategory(currentCategory);
-    } else {
-      document.getElementById("passwordError").style.display = "block";
-    }
-  };
+        for (let path of paths) {
+          fetch(path)
+            .then(res => {
+              if (res.ok) {
+                window.location.href = path;
+              }
+            })
+            .catch(() => {});
+        }
+      }
 
-  // Cancel button
-  document.getElementById("passwordCancel").onclick = () => {
-    document.getElementById("passwordOverlay").style.display = "none";
-  };
+      // PASSWORD SYSTEM
+      const categoryPasswords = { "STAFF": "56897" };
+      let currentCategory = null;
 
-  // Expose functions to global scope
-  window.filterCategory = filterCategory;
-  window.openGame = openGame;
-  window.handleCategoryClick = handleCategoryClick;
-});
-</script>
-  <!-- PASSWORD POPUP -->
-<div id="passwordOverlay" style="display:none;">
-  <div id="passwordBox">
-    <h2 id="passwordTitle">Enter Password</h2>
-    <input type="password" id="passwordInput" placeholder="Enter password...">
-    
-    <div style="margin-top:15px;">
-      <button id="passwordSubmit">Unlock</button>
-      <button id="passwordCancel">Cancel</button>
-    </div>
+      function handleCategoryClick(category) {
+        if (!categoryPasswords[category]) {
+          filterCategory(category);
+          return;
+        }
+        currentCategory = category;
+        document.getElementById("passwordTitle").innerText = "Enter Password for " + category;
+        document.getElementById("passwordOverlay").style.display = "flex";
+        document.getElementById("passwordInput").value = "";
+        document.getElementById("passwordError").style.display = "none";
+      }
 
-    <p id="passwordError" style="color:red; display:none;">Wrong password</p>
-  </div>
-</div>
+      // Unlock button
+      document.getElementById("passwordSubmit").onclick = () => {
+        const input = document.getElementById("passwordInput").value;
+        if (input === categoryPasswords[currentCategory]) {
+          document.getElementById("passwordOverlay").style.display = "none";
+          filterCategory(currentCategory);
+        } else {
+          document.getElementById("passwordError").style.display = "block";
+        }
+      };
+
+      // Cancel button
+      document.getElementById("passwordCancel").onclick = () => {
+        document.getElementById("passwordOverlay").style.display = "none";
+      };
+
+      // Expose functions to global scope for inline onclick
+      window.filterCategory = filterCategory;
+      window.openGame = openGame;
+      window.handleCategoryClick = handleCategoryClick;
+    });
+  </script>
 </body>
 </html>
