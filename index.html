@@ -436,6 +436,27 @@
       });
     }
 
+    // Multi-folder openGame logic
+    function openGame(file) {
+      const paths = [
+        "games/" + file,
+        "ASCII/" + file,
+        "spacebar-clicker/" + file,
+        "Masked/" + file,
+        "Misc/" + file,
+        file
+      ];
+
+      for (let path of paths) {
+        fetch(path)
+          .then(res => {
+            if (res.ok) {
+              window.location.href = path;
+            }
+          })
+          .catch(() => {});
+      }
+    }
     // PASSWORD SYSTEM - NEON POPUP
 const categoryPasswords = {
   "STAFF": "56897"
@@ -472,28 +493,6 @@ document.getElementById("passwordSubmit").onclick = () => {
 document.getElementById("passwordCancel").onclick = () => {
   document.getElementById("passwordOverlay").style.display = "none";
 };
-
-    // Multi-folder openGame logic
-    function openGame(file) {
-      const paths = [
-        "games/" + file,
-        "ASCII/" + file,
-        "spacebar-clicker/" + file,
-        "Masked/" + file,
-        "Misc/" + file,
-        file
-      ];
-
-      for (let path of paths) {
-        fetch(path)
-          .then(res => {
-            if (res.ok) {
-              window.location.href = path;
-            }
-          })
-          .catch(() => {});
-      }
-    }
   </script>
   <!-- PASSWORD POPUP -->
 <div id="passwordOverlay" style="display:none;">
