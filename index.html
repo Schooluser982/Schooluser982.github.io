@@ -393,30 +393,43 @@
 
   <script>
     
-    // PASSWORD SYSTEM
+// PASSWORD SYSTEM - NEON POPUP
 const categoryPasswords = {
   "STAFF": "56897"
 };
 
-function checkCategoryAccess(category) {
-  // If no password → allow
-  if (!categoryPasswords[category]) return true;
-
-  let input = prompt("Enter password for " + category + ":");
-
-  if (input === categoryPasswords[category]) {
-    return true;
-  } else {
-    alert("Wrong password!");
-    return false;
-  }
-}
+let currentCategory = null;
 
 function handleCategoryClick(category) {
-  if (checkCategoryAccess(category)) {
+  if (!categoryPasswords[category]) {
     filterCategory(category);
+    return;
   }
+
+  currentCategory = category;
+
+  document.getElementById("passwordTitle").innerText = "Enter Password for " + category;
+  document.getElementById("passwordOverlay").style.display = "flex";
+  document.getElementById("passwordInput").value = "";
+  document.getElementById("passwordError").style.display = "none";
 }
+
+// Unlock button
+document.getElementById("passwordSubmit").onclick = () => {
+  const input = document.getElementById("passwordInput").value;
+
+  if (input === categoryPasswords[currentCategory]) {
+    document.getElementById("passwordOverlay").style.display = "none";
+    filterCategory(currentCategory);
+  } else {
+    document.getElementById("passwordError").style.display = "block";
+  }
+};
+
+// Cancel button
+document.getElementById("passwordCancel").onclick = () => {
+  document.getElementById("passwordOverlay").style.display = "none";
+};
     
     // Popup close
     document.getElementById("acceptBtn").addEventListener("click", () => {
