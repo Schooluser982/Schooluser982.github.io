@@ -476,19 +476,6 @@ function handleCategoryClick(category) {
   document.getElementById("passwordInput").value = "";
   document.getElementById("passwordError").style.display = "none";
 }
-
-// Unlock button
-document.getElementById("passwordSubmit").onclick = () => {
-  const input = document.getElementById("passwordInput").value;
-
-  if (input === categoryPasswords[currentCategory]) {
-    document.getElementById("passwordOverlay").style.display = "none";
-    filterCategory(currentCategory);
-  } else {
-    document.getElementById("passwordError").style.display = "block";
-  }
-};
-
 // Cancel button
 document.getElementById("passwordCancel").onclick = () => {
   document.getElementById("passwordOverlay").style.display = "none";
