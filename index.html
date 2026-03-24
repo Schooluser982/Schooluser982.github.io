@@ -176,6 +176,70 @@
       transform: scale(1.05);
       background: #00ffaa;
     }
+
+    /* PASSWORD POPUP */
+#passwordOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+#passwordBox {
+  background: #111;
+  border: 2px solid #00ff66;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 0 20px #00ff66;
+  width: 320px;
+}
+
+#passwordBox h2 {
+  margin-top: 0;
+}
+
+#passwordInput {
+  width: 90%;
+  padding: 10px;
+  background: #0d0d0d;
+  border: 2px solid #00ff66;
+  color: #00ff66;
+  border-radius: 8px;
+  outline: none;
+}
+
+#passwordInput:focus {
+  box-shadow: 0 0 10px #00ffaa;
+}
+
+#passwordSubmit, #passwordCancel {
+  margin: 5px;
+  padding: 10px 15px;
+  background: #111;
+  border: 2px solid #00ff66;
+  color: #00ff66;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#passwordSubmit:hover {
+  background: #00ff66;
+  color: #111;
+}
+
+#passwordCancel:hover {
+  background: red;
+  border-color: red;
+  color: white;
+}
   </style>
 </head>
 
@@ -204,6 +268,7 @@
   <div id="sidebar">
     <h2>Categories</h2>
     <button onclick="filterCategory('All')">All Games</button>
+    <button onclick="handleCategoryClick('STAFF')">🔒 Shooter</button>
     <button onclick="filterCategory('Arcade')">Arcade</button>
     <button onclick="filterCategory('Sandbox')">Sandbox</button>
     <button onclick="filterCategory('Runner')">Runner</button>
@@ -327,6 +392,32 @@
   <script src="counter.js"></script>
 
   <script>
+    
+    // PASSWORD SYSTEM
+const categoryPasswords = {
+  "STAFF": "56897"
+};
+
+function checkCategoryAccess(category) {
+  // If no password → allow
+  if (!categoryPasswords[category]) return true;
+
+  let input = prompt("Enter password for " + category + ":");
+
+  if (input === categoryPasswords[category]) {
+    return true;
+  } else {
+    alert("Wrong password!");
+    return false;
+  }
+}
+
+function handleCategoryClick(category) {
+  if (checkCategoryAccess(category)) {
+    filterCategory(category);
+  }
+}
+    
     // Popup close
     document.getElementById("acceptBtn").addEventListener("click", () => {
       document.getElementById("popupOverlay").style.display = "none";
@@ -391,6 +482,20 @@
       }
     }
   </script>
+  <!-- PASSWORD POPUP -->
+<div id="passwordOverlay" style="display:none;">
+  <div id="passwordBox">
+    <h2 id="passwordTitle">Enter Password</h2>
+    <input type="password" id="passwordInput" placeholder="Enter password...">
+    
+    <div style="margin-top:15px;">
+      <button id="passwordSubmit">Unlock</button>
+      <button id="passwordCancel">Cancel</button>
+    </div>
+
+    <p id="passwordError" style="color:red; display:none;">Wrong password</p>
+  </div>
+</div>
 
 </body>
 </html>
