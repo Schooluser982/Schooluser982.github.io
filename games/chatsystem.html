@@ -1,44 +1,152 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Chat Test</title>
+  <title>Chat System</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1e1e1e;
+      color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    #chatContainer {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
     #messages {
-      height: 300px;
+      flex: 1;
       overflow-y: auto;
-      border: 1px solid #ccc;
-      padding: 10px;
+      padding-right: 10px;
+      margin-bottom: 15px;
+    }
+
+    .msg {
+      background: #2c2c2c;
+      padding: 10px 14px;
+      border-radius: 10px;
       margin-bottom: 10px;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+
+    .msg .username {
+      font-weight: bold;
+      color: #4da3ff;
+      margin-bottom: 3px;
+    }
+
+    #inputArea {
+      display: flex;
+      gap: 10px;
+    }
+
+    #msgInput, #usernameInput {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+
+    #sendBtn, #setUserBtn {
+      padding: 10px 20px;
+      background: #4da3ff;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    #sendBtn:hover, #setUserBtn:hover {
+      background: #1f7bd8;
+    }
+
+    #usernameBox {
+      background: #111;
+      padding: 15px;
+      display: flex;
+      gap: 10px;
+      border-bottom: 1px solid #333;
     }
   </style>
 </head>
 <body>
 
-<div id="messages"></div>
+<div id="usernameBox">
+  <input id="usernameInput" placeholder="Enter your username...">
+  <button id="setUserBtn">Set Username</button>
+</div>
 
-<input id="msgInput" placeholder="Type a message..." />
-<button onclick="send()">Send</button>
+<div id="chatContainer">
+  <div id="messages"></div>
+
+  <div id="inputArea">
+    <input id="msgInput" placeholder="Type a message..." disabled>
+    <button id="sendBtn" disabled>Send</button>
+  </div>
+</div>
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
   const socket = io("https://9m8t7v-3000.csb.app");
 
-  socket.on("connect", () => {
-    console.log("Connected:", socket.id);
-  });
+  let username = null;
 
-  socket.on("chat message", (msg) => {
-    const box = document.getElementById("messages");
-    const div = document.createElement("div");
-    div.textContent = msg;
-    box.appendChild(div);
+  document.getElementById("setUserBtn").onclick = () => {
+    const name = document.getElementById("usernameInput").value.trim();
+    if (name.length < 1) return alert("Enter a username first!");
+
+    username = name;
+
+    // Enable chat
+    document.getElementById("msgInput").disabled = false;
+    document.getElementById("sendBtn").disabled = false;
+
+    // Hide username box
+    document.getElementById("usernameBox").style.display = "none";
+  };
+
+  document.getElementById("sendBtn").onclick = send;
+  document.getElementById("msgInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") send();
   });
 
   function send() {
     const input = document.getElementById("msgInput");
-    socket.emit("chat message", input.value);
+    if (!input.value.trim()) return;
+
+    socket.emit("chat message", {
+      user: username,
+      text: input.value
+    });
+
     input.value = "";
   }
+
+  socket.on("chat message", (msg) => {
+    const box = document.getElementById("messages");
+
+    const div = document.createElement("div");
+    div.className = "msg";
+
+    div.innerHTML = `
+      <div class="username">${msg.user}</div>
+      <div>${msg.text}</div>
+    `;
+
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+  });
 </script>
 
 </body>
