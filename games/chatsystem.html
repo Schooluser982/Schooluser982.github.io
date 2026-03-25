@@ -2,9 +2,8 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>GitHub Chat</title>
+  <title>P2P Chat (Reliable Version)</title>
 
-  <!-- Load PeerJS -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
   <style>
@@ -27,7 +26,7 @@
 <body>
 
 <div class="chat-wrapper">
-  <div id="status-bar">Connecting to Signaling Server...</div>
+  <div id="status-bar">Connecting...</div>
   <div id="messages"></div>
   <div class="input-area">
     <input id="name" type="text" placeholder="Name" value="User">
@@ -37,7 +36,7 @@
 </div>
 
 <script>
-  const LOBBY_ID = "MY_GITHUB_CHATROOM";
+  const LOBBY_ID = "MY_UNIQUE_CHAT_2024";
 
   const status = document.getElementById('status-bar');
   const messages = document.getElementById('messages');
@@ -61,21 +60,27 @@
     if (peer) peer.destroy();
 
     peer = new Peer(targetId, {
-      host: "peerjs.com",
+      host: "0.peerjs.com",
       port: 443,
-      path: "/peerjs",
+      path: "/",
       secure: true,
-      debug: 2
+      debug: 2,
+      config: {
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:global.stun.twilio.com:3478" }
+        ]
+      }
     });
 
     peer.on('open', (id) => {
       if (id === LOBBY_ID) {
         isHost = true;
-        status.innerText = "Lobby Online (You are Host)";
-        log("--- You started the lobby ---", 'sys');
+        status.innerText = "Lobby Online (Host)";
+        log("--- Lobby started ---", 'sys');
         peer.on('connection', c => setup(c));
       } else {
-        status.innerText = "Searching for Lobby...";
+        status.innerText = "Connecting to Lobby...";
         connectToLobby();
       }
     });
@@ -94,12 +99,12 @@
         log("Lobby not found. Hosting...", 'sys');
         start(LOBBY_ID);
       }
-    }, 4000);
+    }, 3000);
 
     conn.on('open', () => {
       clearTimeout(timer);
-      status.innerText = "Connected to Lobby";
-      log("--- Joined the chat ---", 'sys');
+      status.innerText = "Connected";
+      log("--- Joined chat ---", 'sys');
       setup(conn);
     });
   }
@@ -118,7 +123,7 @@
 
     conn.on('close', () => {
       connections = connections.filter(c => c.peer !== conn.peer);
-      log("A user left the chat.", 'sys');
+      log("A user left.", 'sys');
     });
   }
 
