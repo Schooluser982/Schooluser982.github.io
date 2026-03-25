@@ -40,7 +40,27 @@
     .msg .username {
       font-weight: bold;
       color: #4da3ff;
-      margin-bottom: 3px;
+    }
+
+    .msg .time {
+      font-size: 12px;
+      opacity: 0.6;
+      margin-top: 3px;
+    }
+
+    /* Join/Leave Notification */
+    .systemMsg {
+      text-align: center;
+      opacity: 0.7;
+      margin: 8px 0;
+      font-size: 14px;
+    }
+
+    #typingIndicator {
+      font-size: 14px;
+      opacity: 0.7;
+      margin-bottom: 10px;
+      height: 18px;
     }
 
     #inputArea {
@@ -67,10 +87,6 @@
       font-size: 16px;
     }
 
-    #sendBtn:hover, #setUserBtn:hover {
-      background: #1f7bd8;
-    }
-
     #usernameBox {
       background: #111;
       padding: 15px;
@@ -89,6 +105,7 @@
 
 <div id="chatContainer">
   <div id="messages"></div>
+  <div id="typingIndicator"></div>
 
   <div id="inputArea">
     <input id="msgInput" placeholder="Type a message..." disabled>
@@ -101,24 +118,33 @@
   const socket = io("https://9m8t7v-3000.csb.app");
 
   let username = null;
+  let typingTimeout;
 
+  // Set username
   document.getElementById("setUserBtn").onclick = () => {
     const name = document.getElementById("usernameInput").value.trim();
-    if (name.length < 1) return alert("Enter a username first!");
+    if (!name) return alert("Enter a username first!");
 
     username = name;
 
-    // Enable chat
     document.getElementById("msgInput").disabled = false;
     document.getElementById("sendBtn").disabled = false;
-
-    // Hide username box
     document.getElementById("usernameBox").style.display = "none";
+
+    socket.emit("user joined", username);
   };
 
+  // Send message
   document.getElementById("sendBtn").onclick = send;
   document.getElementById("msgInput").addEventListener("keydown", e => {
     if (e.key === "Enter") send();
+
+    socket.emit("typing", username);
+
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      socket.emit("stop typing");
+    }, 800);
   });
 
   function send() {
@@ -131,8 +157,10 @@
     });
 
     input.value = "";
+    socket.emit("stop typing");
   }
 
+  // Display chat messages
   socket.on("chat message", (msg) => {
     const box = document.getElementById("messages");
 
@@ -142,11 +170,39 @@
     div.innerHTML = `
       <div class="username">${msg.user}</div>
       <div>${msg.text}</div>
+      <div class="time">${msg.time}</div>
     `;
 
     box.appendChild(div);
     box.scrollTop = box.scrollHeight;
   });
+
+  // Typing indicator
+  socket.on("typing", (user) => {
+    document.getElementById("typingIndicator").textContent = `${user} is typing...`;
+  });
+
+  socket.on("stop typing", () => {
+    document.getElementById("typingIndicator").textContent = "";
+  });
+
+  // Join/Leave notifications
+  socket.on("user joined", (user) => {
+    showSystemMessage(`${user} joined the chat`);
+  });
+
+  socket.on("user left", (user) => {
+    showSystemMessage(`${user} left the chat`);
+  });
+
+  function showSystemMessage(text) {
+    const box = document.getElementById("messages");
+    const div = document.createElement("div");
+    div.className = "systemMsg";
+    div.textContent = text;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+  }
 </script>
 
 </body>
