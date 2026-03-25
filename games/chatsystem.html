@@ -2,13 +2,13 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Discord-style Chat</title>
-  <script src="https://js.pusher.com/8.2/pusher.min.js"></script>
+  <title>P2P Lobby Chat</title>
+  <script src="https://unpkg.com"></script>
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: system-ui, -apple-system, sans-serif;
       background: #0b0b10;
       color: #e5e5e5;
       display: flex;
@@ -35,230 +35,192 @@
       align-items: center;
       justify-content: space-between;
     }
-    .chat-header-title {
-      font-weight: 600;
-    }
-    .chat-header-user {
-      font-size: 13px;
-      color: #aaa;
-    }
+    .chat-header-title { font-weight: 600; color: #5865f2; }
+    .chat-header-user { font-size: 12px; color: #aaa; }
     .chat-messages {
       flex: 1;
       padding: 12px 16px;
       overflow-y: auto;
       background: #313338;
     }
-    .message {
-      margin-bottom: 10px;
-      display: flex;
-      gap: 8px;
-    }
+    .message { margin-bottom: 10px; display: flex; gap: 8px; }
     .avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: #5865f2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: 600;
-      color: #fff;
-      flex-shrink: 0;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #5865f2; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 600; color: #fff; flex-shrink: 0;
     }
-    .message-body {
-      flex: 1;
-    }
-    .message-header {
-      display: flex;
-      align-items: baseline;
-      gap: 6px;
-    }
-    .username {
-      font-weight: 600;
-      font-size: 14px;
-    }
-    .timestamp {
-      font-size: 11px;
-      color: #aaa;
-    }
-    .message-text {
-      font-size: 14px;
-      margin-top: 2px;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
+    .message-body { flex: 1; }
+    .message-header { display: flex; align-items: baseline; gap: 6px; }
+    .username { font-weight: 600; font-size: 14px; }
+    .timestamp { font-size: 11px; color: #aaa; }
+    .message-text { font-size: 14px; margin-top: 2px; white-space: pre-wrap; word-wrap: break-word; }
     .chat-input-area {
       padding: 10px 12px;
       background: #2b2d31;
       border-top: 1px solid #202225;
-      display: flex;
-      gap: 8px;
-      align-items: center;
+      display: flex; gap: 8px; align-items: center;
     }
-    .name-input {
-      width: 120px;
-      padding: 6px 8px;
-      border-radius: 4px;
-      border: 1px solid #202225;
-      background: #1e1f23;
-      color: #e5e5e5;
-      font-size: 13px;
-    }
-    .message-input {
-      flex: 1;
-      padding: 8px 10px;
-      border-radius: 4px;
-      border: 1px solid #202225;
-      background: #1e1f23;
-      color: #e5e5e5;
-      font-size: 14px;
-    }
-    .send-button {
-      padding: 8px 14px;
-      border-radius: 4px;
-      border: none;
-      background: #5865f2;
-      color: #fff;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .send-button:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
+    .name-input { width: 100px; padding: 8px; border-radius: 4px; border: 1px solid #202225; background: #1e1f23; color: #fff; font-size: 13px; }
+    .message-input { flex: 1; padding: 8px; border-radius: 4px; border: 1px solid #202225; background: #1e1f23; color: #fff; font-size: 14px; }
+    .send-button { padding: 8px 16px; border-radius: 4px; border: none; background: #5865f2; color: #fff; font-weight: 600; cursor: pointer; }
+    .system-msg { font-style: italic; color: #888; font-size: 12px; text-align: center; margin: 10px 0; }
   </style>
 </head>
 <body>
 
 <div class="chat-wrapper">
   <div class="chat-header">
-    <div class="chat-header-title"># general</div>
-    <div class="chat-header-user" id="headerUser"></div>
+    <div class="chat-header-title" id="status">Connecting...</div>
+    <div class="chat-header-user" id="headerUser">Initializing Peer...</div>
   </div>
-
   <div class="chat-messages" id="messages"></div>
-
   <div class="chat-input-area">
-    <input id="name" class="name-input" placeholder="Name" />
-    <input id="input" class="message-input" placeholder="Message" />
+    <input id="name" class="name-input" placeholder="Name" value="Guest" />
+    <input id="input" class="message-input" placeholder="Type a message..." />
     <button id="send" class="send-button">Send</button>
   </div>
 </div>
 
 <script>
-  // --- CONFIG: put your Pusher key + cluster here ---
-  const PUSHER_KEY = "f0f528ec17ffdf517b7b"; // replace if needed
-  const PUSHER_CLUSTER = "us2";               // replace if needed
-  // --------------------------------------------------
-
-  // Random color per user (for avatar background)
-  function randomColor(seed) {
-    let hash = 0;
-    for (let i = 0; i < seed.length; i++) {
-      hash = seed.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const hue = Math.abs(hash) % 360;
-    return `hsl(${hue}, 70%, 55%)`;
-  }
-
-  // Format time like "3:21 PM"
-  function formatTime(date) {
-    return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-  }
-
+  // CHANGE THIS to something unique so you don't clash with other people's apps
+  const LOBBY_ID = "MY_SECRET_CHAT_LOBBY_12345"; 
+  
   const nameInput = document.getElementById("name");
   const msgInput = document.getElementById("input");
   const sendBtn = document.getElementById("send");
   const messagesDiv = document.getElementById("messages");
+  const statusTitle = document.getElementById("status");
   const headerUser = document.getElementById("headerUser");
 
-  // Show current "identity" in header
-  function updateHeaderName() {
-    const name = nameInput.value.trim() || "Anonymous";
-    headerUser.textContent = `You are: ${name}`;
-  }
-  nameInput.addEventListener("input", updateHeaderName);
-  updateHeaderName();
+  let peer = null;
+  let connections = [];
+  let isHost = false;
 
-  // Initialize Pusher
-  const pusher = new Pusher(PUSHER_KEY, {
-    cluster: PUSHER_CLUSTER
-  });
+  // 1. Initialize Peer with a random ID
+  function initPeer(customId = null) {
+    if (peer) peer.destroy();
+    
+    peer = customId ? new Peer(customId) : new Peer();
 
-  // Subscribe to private channel
-  const channel = pusher.subscribe("private-chat");
+    peer.on('open', (id) => {
+      headerUser.textContent = `Your ID: ${id}`;
+      if (id === LOBBY_ID) {
+        setupAsHost();
+      } else {
+        tryConnectToLobby();
+      }
+    });
 
-  // Receive messages
-  channel.bind("client-message", function(data) {
-    addMessageToUI(data.name, data.text, data.time);
-  });
-
-  // Add message to UI
-  function addMessageToUI(name, text, time) {
-    const wrapper = document.createElement("div");
-    wrapper.className = "message";
-
-    const avatar = document.createElement("div");
-    avatar.className = "avatar";
-    const initials = (name || "A").trim()[0]?.toUpperCase() || "A";
-    avatar.textContent = initials;
-    avatar.style.background = randomColor(name || "Anonymous");
-
-    const body = document.createElement("div");
-    body.className = "message-body";
-
-    const header = document.createElement("div");
-    header.className = "message-header";
-
-    const userSpan = document.createElement("span");
-    userSpan.className = "username";
-    userSpan.textContent = name || "Anonymous";
-
-    const timeSpan = document.createElement("span");
-    timeSpan.className = "timestamp";
-    timeSpan.textContent = time || formatTime(new Date());
-
-    header.appendChild(userSpan);
-    header.appendChild(timeSpan);
-
-    const textDiv = document.createElement("div");
-    textDiv.className = "message-text";
-    textDiv.textContent = text;
-
-    body.appendChild(header);
-    body.appendChild(textDiv);
-
-    wrapper.appendChild(avatar);
-    wrapper.appendChild(body);
-
-    messagesDiv.appendChild(wrapper);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    peer.on('error', (err) => {
+      if (err.type === 'unavailable-id' || err.type === 'peer-unavailable') {
+        // If Lobby ID is taken, we are a Guest. If it's free, we try to take it.
+        if (!isHost) tryConnectToLobby();
+      } else {
+        console.error("Peer Error:", err);
+      }
+    });
   }
 
-  // Send message
+  // 2. Try to find the Lobby Host
+  function tryConnectToLobby() {
+    statusTitle.textContent = "Searching for Lobby...";
+    const conn = peer.connect(LOBBY_ID);
+    
+    conn.on('open', () => {
+      statusTitle.textContent = "Connected to Lobby (Guest)";
+      addSystemMessage("Successfully joined the chat.");
+      setupConnection(conn);
+    });
+
+    // If no one is using the Lobby ID, WE become the Host
+    setTimeout(() => {
+      if (connections.length === 0 && !isHost) {
+        console.log("No lobby found. Becoming host...");
+        initPeer(LOBBY_ID);
+      }
+    }, 2000);
+  }
+
+  // 3. Become the Host
+  function setupAsHost() {
+    isHost = true;
+    statusTitle.textContent = "Lobby Host (Online)";
+    addSystemMessage("You are the Lobby Host. Others can now join.");
+    
+    peer.on('connection', (conn) => {
+      setupConnection(conn);
+      addSystemMessage(`Someone joined the chat.`);
+    });
+  }
+
+  // 4. Handle incoming/outgoing data
+  function setupConnection(conn) {
+    if (!connections.find(c => c.peer === conn.peer)) {
+      connections.push(conn);
+    }
+
+    conn.on('data', (data) => {
+      // If Host, relay message to everyone else
+      if (isHost) {
+        connections.forEach(c => {
+          if (c.peer !== conn.peer) c.send(data);
+        });
+      }
+      addMessageToUI(data.name, data.text, data.time);
+    });
+
+    conn.on('close', () => {
+      connections = connections.filter(c => c.peer !== conn.peer);
+      addSystemMessage("A user disconnected.");
+    });
+  }
+
+  // 5. Messaging Logic
   function sendMessage() {
     const name = nameInput.value.trim() || "Anonymous";
     const text = msgInput.value.trim();
     if (!text) return;
 
-    const payload = {
-      name,
-      text,
-      time: formatTime(new Date())
-    };
+    const payload = { name, text, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
 
-    // Trigger client event
-    channel.trigger("client-message", payload);
+    // Send to all connected peers
+    connections.forEach(c => {
+      if (c.open) c.send(payload);
+    });
 
+    addMessageToUI(payload.name, payload.text, payload.time);
     msgInput.value = "";
   }
 
+  function addMessageToUI(name, text, time) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "message";
+    wrapper.innerHTML = `
+      <div class="avatar" style="background: ${isHost && name === nameInput.value ? '#eb459e' : '#5865f2'}">${name[0].toUpperCase()}</div>
+      <div class="message-body">
+        <div class="message-header">
+          <span class="username">${name}</span>
+          <span class="timestamp">${time}</span>
+        </div>
+        <div class="message-text">${text}</div>
+      </div>`;
+    messagesDiv.appendChild(wrapper);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
+  function addSystemMessage(text) {
+    const div = document.createElement("div");
+    div.className = "system-msg";
+    div.textContent = text;
+    messagesDiv.appendChild(div);
+  }
+
   sendBtn.addEventListener("click", sendMessage);
-  msgInput.addEventListener("keydown", e => {
-    if (e.key === "Enter") sendMessage();
-  });
+  msgInput.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
+
+  // Start the app
+  initPeer();
 </script>
 
 </body>
