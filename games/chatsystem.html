@@ -2,225 +2,145 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>P2P Lobby Chat</title>
+  <title>P2P Quick Chat</title>
   <script src="https://unpkg.com"></script>
   <style>
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #0b0b10;
-      color: #e5e5e5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .chat-wrapper {
-      width: 100%;
-      max-width: 800px;
-      height: 90vh;
-      background: #1e1f23;
-      border-radius: 10px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      box-shadow: 0 0 30px rgba(0,0,0,0.5);
-    }
-    .chat-header {
-      padding: 10px 16px;
-      background: #2b2d31;
-      border-bottom: 1px solid #202225;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .chat-header-title { font-weight: 600; color: #5865f2; }
-    .chat-header-user { font-size: 12px; color: #aaa; }
-    .chat-messages {
-      flex: 1;
-      padding: 12px 16px;
-      overflow-y: auto;
-      background: #313338;
-    }
-    .message { margin-bottom: 10px; display: flex; gap: 8px; }
-    .avatar {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: #5865f2; display: flex;
-      align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 600; color: #fff; flex-shrink: 0;
-    }
-    .message-body { flex: 1; }
-    .message-header { display: flex; align-items: baseline; gap: 6px; }
-    .username { font-weight: 600; font-size: 14px; }
-    .timestamp { font-size: 11px; color: #aaa; }
-    .message-text { font-size: 14px; margin-top: 2px; white-space: pre-wrap; word-wrap: break-word; }
-    .chat-input-area {
-      padding: 10px 12px;
-      background: #2b2d31;
-      border-top: 1px solid #202225;
-      display: flex; gap: 8px; align-items: center;
-    }
-    .name-input { width: 100px; padding: 8px; border-radius: 4px; border: 1px solid #202225; background: #1e1f23; color: #fff; font-size: 13px; }
-    .message-input { flex: 1; padding: 8px; border-radius: 4px; border: 1px solid #202225; background: #1e1f23; color: #fff; font-size: 14px; }
-    .send-button { padding: 8px 16px; border-radius: 4px; border: none; background: #5865f2; color: #fff; font-weight: 600; cursor: pointer; }
-    .system-msg { font-style: italic; color: #888; font-size: 12px; text-align: center; margin: 10px 0; }
+    body { margin: 0; font-family: sans-serif; background: #0b0b10; color: #e5e5e5; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .chat-wrapper { width: 100%; max-width: 600px; height: 80vh; background: #1e1f23; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; }
+    .chat-header { padding: 12px; background: #2b2d31; border-bottom: 1px solid #202225; display: flex; justify-content: space-between; align-items: center; }
+    .chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: #313338; }
+    .message { margin-bottom: 10px; font-size: 14px; }
+    .username { font-weight: bold; color: #5865f2; margin-right: 5px; }
+    .chat-input-area { padding: 10px; background: #2b2d31; display: flex; gap: 5px; }
+    input { padding: 8px; border-radius: 4px; border: none; background: #1e1f23; color: white; }
+    .name-input { width: 80px; }
+    .message-input { flex: 1; }
+    button { padding: 8px 15px; background: #5865f2; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    .system { font-style: italic; color: #888; text-align: center; margin: 5px 0; font-size: 12px; }
   </style>
 </head>
 <body>
 
 <div class="chat-wrapper">
   <div class="chat-header">
-    <div class="chat-header-title" id="status">Connecting...</div>
-    <div class="chat-header-user" id="headerUser">Initializing Peer...</div>
+    <div id="status" style="font-weight:bold">Status: Initializing...</div>
+    <div id="myId" style="font-size:10px; color:#aaa">ID: ---</div>
   </div>
-  <div class="chat-messages" id="messages"></div>
+  <div id="messages" class="chat-messages"></div>
   <div class="chat-input-area">
     <input id="name" class="name-input" placeholder="Name" value="Guest" />
     <input id="input" class="message-input" placeholder="Type a message..." />
-    <button id="send" class="send-button">Send</button>
+    <button id="send">Send</button>
   </div>
 </div>
 
 <script>
-  // CHANGE THIS to something unique so you don't clash with other people's apps
-  const LOBBY_ID = "MY_SECRET_CHAT_LOBBY_12345"; 
+  // Change this string to something unique for your group
+  const LOBBY_ID = "DEMO_CHAT_LOBBY_999"; 
   
-  const nameInput = document.getElementById("name");
-  const msgInput = document.getElementById("input");
-  const sendBtn = document.getElementById("send");
-  const messagesDiv = document.getElementById("messages");
-  const statusTitle = document.getElementById("status");
-  const headerUser = document.getElementById("headerUser");
+  const statusEl = document.getElementById('status');
+  const myIdEl = document.getElementById('myId');
+  const messagesEl = document.getElementById('messages');
+  const msgInput = document.getElementById('input');
+  const nameInput = document.getElementById('name');
 
   let peer = null;
   let connections = [];
   let isHost = false;
 
-  // 1. Initialize Peer with a random ID
-  function initPeer(customId = null) {
+  function addLog(text, isSystem = true) {
+    const div = document.createElement('div');
+    div.className = isSystem ? "system" : "message";
+    div.innerHTML = text;
+    messagesEl.appendChild(div);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function init(targetId = null) {
     if (peer) peer.destroy();
     
-    peer = customId ? new Peer(customId) : new Peer();
+    // Create peer. If targetId is provided, we try to be the Host.
+    peer = targetId ? new Peer(targetId) : new Peer();
 
     peer.on('open', (id) => {
-      headerUser.textContent = `Your ID: ${id}`;
+      myIdEl.textContent = "ID: " + id;
       if (id === LOBBY_ID) {
-        setupAsHost();
+        becomeHost();
       } else {
-        tryConnectToLobby();
+        becomeGuest();
       }
     });
 
     peer.on('error', (err) => {
-      if (err.type === 'unavailable-id' || err.type === 'peer-unavailable') {
-        // If Lobby ID is taken, we are a Guest. If it's free, we try to take it.
-        if (!isHost) tryConnectToLobby();
-      } else {
-        console.error("Peer Error:", err);
+      console.log("Peer error:", err.type);
+      if (err.type === 'unavailable-id') {
+        // If we tried to be Host but ID was taken, just be a Guest
+        init(); 
       }
     });
   }
 
-  // 2. Try to find the Lobby Host
-  function tryConnectToLobby() {
-    statusTitle.textContent = "Searching for Lobby...";
-    const conn = peer.connect(LOBBY_ID);
-    
-    conn.on('open', () => {
-      statusTitle.textContent = "Connected to Lobby (Guest)";
-      addSystemMessage("Successfully joined the chat.");
-      setupConnection(conn);
-    });
-
-    // If no one is using the Lobby ID, WE become the Host
-    setTimeout(() => {
-      if (connections.length === 0 && !isHost) {
-        console.log("No lobby found. Becoming host...");
-        initPeer(LOBBY_ID);
-      }
-    }, 2000);
-  }
-
-  // 3. Become the Host
-  function setupAsHost() {
+  function becomeHost() {
     isHost = true;
-    statusTitle.textContent = "Lobby Host (Online)";
-    addSystemMessage("You are the Lobby Host. Others can now join.");
+    statusEl.textContent = "Status: Hosting Lobby";
+    addLog("--- You are the Host ---");
     
     peer.on('connection', (conn) => {
-      setupConnection(conn);
-      addSystemMessage(`Someone joined the chat.`);
+      setupConn(conn);
+      addLog("User joined the lobby");
     });
   }
 
-  // 4. Handle incoming/outgoing data
-  function setupConnection(conn) {
-    if (!connections.find(c => c.peer === conn.peer)) {
-      connections.push(conn);
-    }
+  function becomeGuest() {
+    statusEl.textContent = "Status: Searching...";
+    const conn = peer.connect(LOBBY_ID);
+
+    // Timeout: If lobby isn't found in 3s, WE become the host
+    const timeout = setTimeout(() => {
+      if (connections.length === 0) {
+        addLog("No lobby found. Starting one...");
+        init(LOBBY_ID);
+      }
+    }, 3000);
+
+    conn.on('open', () => {
+      clearTimeout(timeout);
+      statusEl.textContent = "Status: Connected (Guest)";
+      addLog("--- Connected to Lobby ---");
+      setupConn(conn);
+    });
+  }
+
+  function setupConn(conn) {
+    if (!connections.find(c => c.peer === conn.peer)) connections.push(conn);
 
     conn.on('data', (data) => {
-      // If Host, relay message to everyone else
       if (isHost) {
-        connections.forEach(c => {
-          if (c.peer !== conn.peer) c.send(data);
-        });
+        // Relay to everyone else
+        connections.forEach(c => { if(c.peer !== conn.peer) c.send(data); });
       }
-      addMessageToUI(data.name, data.text, data.time);
+      addLog(`<span class="username">${data.name}:</span> ${data.text}`, false);
     });
 
     conn.on('close', () => {
       connections = connections.filter(c => c.peer !== conn.peer);
-      addSystemMessage("A user disconnected.");
+      addLog("A user left");
     });
   }
 
-  // 5. Messaging Logic
-  function sendMessage() {
-    const name = nameInput.value.trim() || "Anonymous";
+  document.getElementById('send').onclick = () => {
     const text = msgInput.value.trim();
     if (!text) return;
-
-    const payload = { name, text, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
-
-    // Send to all connected peers
-    connections.forEach(c => {
-      if (c.open) c.send(payload);
-    });
-
-    addMessageToUI(payload.name, payload.text, payload.time);
+    
+    const data = { name: nameInput.value, text: text };
+    connections.forEach(c => { if(c.open) c.send(data); });
+    
+    addLog(`<span class="username">You:</span> ${text}`, false);
     msgInput.value = "";
-  }
+  };
 
-  function addMessageToUI(name, text, time) {
-    const wrapper = document.createElement("div");
-    wrapper.className = "message";
-    wrapper.innerHTML = `
-      <div class="avatar" style="background: ${isHost && name === nameInput.value ? '#eb459e' : '#5865f2'}">${name[0].toUpperCase()}</div>
-      <div class="message-body">
-        <div class="message-header">
-          <span class="username">${name}</span>
-          <span class="timestamp">${time}</span>
-        </div>
-        <div class="message-text">${text}</div>
-      </div>`;
-    messagesDiv.appendChild(wrapper);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }
-
-  function addSystemMessage(text) {
-    const div = document.createElement("div");
-    div.className = "system-msg";
-    div.textContent = text;
-    messagesDiv.appendChild(div);
-  }
-
-  sendBtn.addEventListener("click", sendMessage);
-  msgInput.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
-
-  // Start the app
-  initPeer();
+  init();
 </script>
 
 </body>
