@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>P2P GitHub Chat</title>
-  <script src="https://unpkg.com"></script>
+
+  <!-- Load PeerJS correctly -->
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; font-family: system-ui, sans-serif; background: #0b0b10; color: #eee; display: flex; justify-content: center; align-items: center; height: 100vh; }
@@ -34,9 +37,9 @@
 </div>
 
 <script>
-  // 1. CHANGE THIS KEY to something totally unique to you
-  const LOBBY_ID = "MY_UNIQUE_GHPAGES_CHAT_2024"; 
-  
+  // Unique lobby ID so your chat room is separate from others
+  const LOBBY_ID = "MY_UNIQUE_GHPAGES_CHAT_2024";
+
   const status = document.getElementById('status-bar');
   const messages = document.getElementById('messages');
   const nameInp = document.getElementById('name');
@@ -55,15 +58,16 @@
     messages.scrollTop = messages.scrollHeight;
   }
 
-  // 2. Initialize with SECURE settings for GitHub Pages
   function start(targetId = null) {
     if (peer) peer.destroy();
-    
-    // Explicitly force HTTPS/Secure connection
+
+    // Connect to PeerJS Cloud server
     peer = new Peer(targetId, {
-      debug: 2,
+      host: "peerjs.com",
+      port: 443,
+      path: "/myapp",
       secure: true,
-      port: 443
+      debug: 2
     });
 
     peer.on('open', (id) => {
@@ -79,16 +83,14 @@
     });
 
     peer.on('error', (err) => {
-      console.warn("PeerJS Error:", err.type);
-      if (err.type === 'unavailable-id') start(); // ID taken, become guest
-      if (err.type === 'peer-unavailable') start(LOBBY_ID); // Lobby gone, become host
+      console.warn("PeerJS Error:", err);
+      log("Error: " + err.type, 'sys');
     });
   }
 
   function connectToLobby() {
     const conn = peer.connect(LOBBY_ID);
-    
-    // Fail-safe: If no connection in 4 seconds, become the host yourself
+
     const timer = setTimeout(() => {
       if (connections.length === 0) {
         log("Lobby not found. Hosting...", 'sys');
@@ -108,7 +110,11 @@
     if (!connections.find(c => c.peer === conn.peer)) connections.push(conn);
 
     conn.on('data', (data) => {
-      if (isHost) connections.forEach(c => { if(c.peer !== conn.peer) c.send(data); });
+      if (isHost) {
+        connections.forEach(c => {
+          if (c.peer !== conn.peer) c.send(data);
+        });
+      }
       log(`<span class="user">${data.n}:</span> ${data.t}`);
     });
 
@@ -121,12 +127,12 @@
   sendBtn.onclick = () => {
     if (!textInp.value.trim()) return;
     const data = { n: nameInp.value, t: textInp.value };
-    connections.forEach(c => { if(c.open) c.send(data); });
+    connections.forEach(c => { if (c.open) c.send(data); });
     log(`<span class="user">You:</span> ${data.t}`);
     textInp.value = "";
   };
 
-  textInp.onkeypress = (e) => { if(e.key === "Enter") sendBtn.onclick(); };
+  textInp.onkeypress = (e) => { if (e.key === "Enter") sendBtn.onclick(); };
 
   start();
 </script>
