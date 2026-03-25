@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>P2P GitHub Chat</title>
 
-  <!-- Load PeerJS correctly -->
+  <!-- Load PeerJS -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
   <style>
@@ -37,8 +37,7 @@
 </div>
 
 <script>
-  // Unique lobby ID so your chat room is separate from others
-  const LOBBY_ID = "MY_UNIQUE_GHPAGES_CHAT_2024";
+  const LOBBY_ID = "MY_GITHUB_CHAT_2026";
 
   const status = document.getElementById('status-bar');
   const messages = document.getElementById('messages');
@@ -61,11 +60,10 @@
   function start(targetId = null) {
     if (peer) peer.destroy();
 
-    // Connect to PeerJS Cloud server
     peer = new Peer(targetId, {
       host: "peerjs.com",
       port: 443,
-      path: "/myapp",
+      path: "/peerjs",
       secure: true,
       debug: 2
     });
