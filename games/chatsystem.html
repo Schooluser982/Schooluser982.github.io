@@ -10,13 +10,63 @@
       margin: 0;
       padding: 0;
       display: flex;
-      flex-direction: column;
       height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Left sidebar for rooms */
+    #roomSidebar {
+      width: 220px;
+      background: #141414;
+      border-right: 1px solid #333;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #roomSidebarHeader {
+      padding: 10px;
+      border-bottom: 1px solid #333;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    #roomList {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .roomItem {
+      padding: 8px 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .roomItem:hover {
+      background: #1f1f1f;
+    }
+
+    .roomItem.active {
+      background: #2b2b2b;
+    }
+
+    .roomLock {
+      opacity: 0.7;
+      margin-left: 6px;
+    }
+
+    /* Main area */
+    #mainArea {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     #topBar {
       background: #111;
-      padding: 10px 15px;
+      padding: 8px 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -28,8 +78,13 @@
       opacity: 0.8;
     }
 
-    #roomButtons button {
-      margin-left: 8px;
+    #topButtons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #topButtons button {
       padding: 6px 10px;
       background: #4da3ff;
       border: none;
@@ -39,7 +94,7 @@
       font-size: 13px;
     }
 
-    #roomButtons button:hover {
+    #topButtons button:hover {
       background: #1f7bd8;
     }
 
@@ -47,21 +102,21 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      padding: 20px;
+      padding: 10px 15px;
     }
 
     #messages {
       flex: 1;
       overflow-y: auto;
       padding-right: 10px;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
     }
 
     .msg {
       background: #2c2c2c;
-      padding: 10px 14px;
+      padding: 8px 12px;
       border-radius: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       max-width: 70%;
       word-wrap: break-word;
       position: relative;
@@ -72,63 +127,107 @@
       color: #4da3ff;
     }
 
+    .adminName {
+      color: #ffb347;
+    }
+
     .msg .time {
-      font-size: 12px;
+      font-size: 11px;
       opacity: 0.6;
       margin-top: 3px;
     }
 
-    .editBtn {
+    .msgButtons {
       position: absolute;
-      right: 8px;
-      top: 8px;
+      right: 6px;
+      top: 6px;
+      display: flex;
+      gap: 4px;
+    }
+
+    .msgButtons button {
       background: transparent;
       border: none;
       color: #aaa;
-      font-size: 12px;
+      font-size: 11px;
       cursor: pointer;
     }
 
-    .editBtn:hover {
+    .msgButtons button:hover {
       color: #fff;
+    }
+
+    .replyPreview {
+      font-size: 11px;
+      opacity: 0.7;
+      border-left: 2px solid #555;
+      padding-left: 6px;
+      margin-bottom: 4px;
     }
 
     .systemMsg {
       text-align: center;
       opacity: 0.7;
-      margin: 8px 0;
-      font-size: 14px;
+      margin: 6px 0;
+      font-size: 13px;
     }
 
     #typingIndicator {
-      font-size: 14px;
+      font-size: 13px;
       opacity: 0.7;
-      margin-bottom: 10px;
-      height: 18px;
+      margin-bottom: 6px;
+      height: 16px;
     }
 
     #inputArea {
       display: flex;
-      gap: 10px;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    #replyBar {
+      display: none;
+      font-size: 12px;
+      opacity: 0.8;
+      background: #252525;
+      padding: 4px 8px;
+      border-radius: 6px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #replyBarText {
+      font-size: 12px;
+    }
+
+    #replyCancel {
+      cursor: pointer;
+      color: #ff6666;
+      margin-left: 10px;
+    }
+
+    #inputRow {
+      display: flex;
+      gap: 8px;
     }
 
     #msgInput, #usernameInput {
       flex: 1;
-      padding: 10px;
+      padding: 8px;
       border-radius: 8px;
       border: none;
       outline: none;
-      font-size: 16px;
+      font-size: 15px;
     }
 
     #sendBtn, #setUserBtn {
-      padding: 10px 20px;
+      padding: 8px 16px;
       background: #4da3ff;
       border: none;
       border-radius: 8px;
       color: white;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 15px;
     }
 
     #sendBtn:hover, #setUserBtn:hover {
@@ -137,9 +236,9 @@
 
     #usernameBox {
       background: #111;
-      padding: 15px;
+      padding: 10px;
       display: flex;
-      gap: 10px;
+      gap: 8px;
       border-bottom: 1px solid #333;
     }
 
@@ -149,12 +248,13 @@
       margin-left: 8px;
     }
 
-    /* Generic modal */
+    /* Generic modals */
     #modal,
     #adminModal,
     #createRoomModal,
     #joinRoomModal,
-    #leaveModal {
+    #leaveModal,
+    #editModal {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
@@ -204,31 +304,69 @@
     .modalButtons button:hover {
       background: #1f7bd8;
     }
+
+    /* Online users dropdown */
+    #onlinePanel {
+      position: absolute;
+      right: 10px;
+      top: 40px;
+      background: #222;
+      border-radius: 8px;
+      border: 1px solid #333;
+      padding: 8px;
+      min-width: 180px;
+      display: none;
+      z-index: 5000;
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 13px;
+    }
+
+    .onlineUser {
+      padding: 4px 6px;
+    }
+
+    .onlineUser + .onlineUser {
+      border-top: 1px solid #333;
+    }
   </style>
 </head>
 <body>
 
-<div id="usernameBox">
-  <input id="usernameInput" placeholder="Enter your username...">
-  <button id="setUserBtn">Set Username</button>
+<div id="roomSidebar">
+  <div id="roomSidebarHeader">Rooms</div>
+  <div id="roomList"></div>
 </div>
 
-<div id="topBar">
-  <div id="roomInfo">Room: <span id="roomName">public</span></div>
-  <div id="roomButtons">
-    <button id="createRoomBtn">Create Room</button>
-    <button id="joinRoomBtn">Join Room</button>
-    <button id="leaveRoomBtn">Leave Room</button>
+<div id="mainArea">
+  <div id="usernameBox">
+    <input id="usernameInput" placeholder="Enter your username...">
+    <button id="setUserBtn">Set Username</button>
   </div>
-</div>
 
-<div id="chatContainer">
-  <div id="messages"></div>
-  <div id="typingIndicator"></div>
+  <div id="topBar">
+    <div id="roomInfo">Room: <span id="roomName">public</span></div>
+    <div id="topButtons">
+      <button id="createRoomBtn">Create Room</button>
+      <button id="leaveRoomBtn">Leave Room</button>
+      <button id="onlineBtn">Online</button>
+    </div>
+  </div>
 
-  <div id="inputArea">
-    <input id="msgInput" placeholder="Type a message..." disabled>
-    <button id="sendBtn" disabled>Send</button>
+  <div id="chatContainer">
+    <div id="messages"></div>
+    <div id="typingIndicator"></div>
+
+    <div id="inputArea">
+      <div id="replyBar">
+        <span id="replyBarText"></span>
+        <span id="replyCancel">✕</span>
+      </div>
+      <div id="inputRow">
+        <input id="msgInput" placeholder="Type a message..." disabled>
+        <button id="sendBtn" disabled>Send</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -245,7 +383,7 @@
 <!-- Admin password modal -->
 <div id="adminModal">
   <div class="modalBox">
-    <div style="margin-bottom: 10px;">Enter admin password for <b>Schooluser982</b></div>
+    <div style="margin-bottom: 10px;">Enter admin password for <b id="adminUserLabel"></b></div>
     <input type="password" id="adminPasswordInput" placeholder="Admin password">
     <div class="modalButtons">
       <button id="adminConfirm">Confirm</button>
@@ -291,6 +429,21 @@
   </div>
 </div>
 
+<!-- Edit message modal -->
+<div id="editModal">
+  <div class="modalBox">
+    <div style="margin-bottom: 10px;">Edit Message</div>
+    <input id="editMessageInput" placeholder="New message text">
+    <div class="modalButtons">
+      <button id="editConfirm">Save</button>
+      <button id="editCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Online users panel -->
+<div id="onlinePanel"></div>
+
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
   // Replace URL with your server if needed
@@ -300,12 +453,21 @@
   let typingTimeout;
   let isAdmin = false;
   let pendingAdminName = null;
+  let pendingRoomToJoin = null;
+  let pendingEditMessageId = null;
+  let replyToId = null;
+  let replyToText = "";
+  let currentRoom = "public";
+  let currentUsers = [];
+  let rooms = [];
 
   const roomNameEl = document.getElementById("roomName");
   const messagesEl = document.getElementById("messages");
   const typingEl = document.getElementById("typingIndicator");
   const msgInput = document.getElementById("msgInput");
   const sendBtn = document.getElementById("sendBtn");
+
+  const onlinePanel = document.getElementById("onlinePanel");
 
   function showModal(msg) {
     document.getElementById("modalMessage").textContent = msg;
@@ -321,8 +483,9 @@
     const name = document.getElementById("usernameInput").value.trim();
     if (!name) return showModal("Enter a username first!");
 
-    if (name === "Schooluser982") {
+    if (name === "Schooluser982" || name === "Friend1") {
       pendingAdminName = name;
+      document.getElementById("adminUserLabel").textContent = name;
       document.getElementById("adminPasswordInput").value = "";
       document.getElementById("adminModal").style.display = "flex";
     } else {
@@ -335,6 +498,7 @@
       if (!res.ok) {
         if (res.error === "admin_password_required") {
           pendingAdminName = name;
+          document.getElementById("adminUserLabel").textContent = name;
           document.getElementById("adminPasswordInput").value = "";
           document.getElementById("adminModal").style.display = "flex";
           return;
@@ -347,7 +511,8 @@
 
       username = name;
       isAdmin = res.isAdmin;
-      roomNameEl.textContent = res.room || "public";
+      currentRoom = res.room || "public";
+      roomNameEl.textContent = currentRoom;
 
       msgInput.disabled = false;
       sendBtn.disabled = false;
@@ -394,7 +559,7 @@
       if (!res.ok) {
         showModal(res.error);
       } else {
-        showModal("Room created. Use Join Room to enter it.");
+        showModal("Room created. Click it in the sidebar to join.");
       }
     });
     document.getElementById("createRoomModal").style.display = "none";
@@ -404,14 +569,7 @@
     document.getElementById("createRoomModal").style.display = "none";
   };
 
-  // Join room modal
-  document.getElementById("joinRoomBtn").onclick = () => {
-    if (!username) return showModal("Set username first.");
-    document.getElementById("joinRoomName").value = "";
-    document.getElementById("joinRoomPassword").value = "";
-    document.getElementById("joinRoomModal").style.display = "flex";
-  };
-
+  // Join room modal (used only for locked rooms)
   document.getElementById("joinRoomConfirm").onclick = () => {
     const roomName = document.getElementById("joinRoomName").value.trim();
     const password = document.getElementById("joinRoomPassword").value;
@@ -422,8 +580,10 @@
       if (!res.ok) {
         showModal(res.error);
       } else {
+        currentRoom = res.room;
         roomNameEl.textContent = res.room;
         messagesEl.innerHTML = "";
+        clearReply();
       }
     });
     document.getElementById("joinRoomModal").style.display = "none";
@@ -445,8 +605,10 @@
       if (!res.ok) {
         showModal(res.error);
       } else {
+        currentRoom = res.room;
         roomNameEl.textContent = res.room;
         messagesEl.innerHTML = "";
+        clearReply();
       }
     });
   };
@@ -455,15 +617,44 @@
     document.getElementById("leaveModal").style.display = "none";
   };
 
+  // Online users dropdown
+  document.getElementById("onlineBtn").onclick = () => {
+    if (onlinePanel.style.display === "flex") {
+      onlinePanel.style.display = "none";
+    } else {
+      renderOnlinePanel();
+      onlinePanel.style.display = "flex";
+    }
+  };
+
+  function renderOnlinePanel() {
+    onlinePanel.innerHTML = "";
+    if (!currentUsers.length) {
+      onlinePanel.textContent = "No users online.";
+      return;
+    }
+    currentUsers.forEach((u) => {
+      const div = document.createElement("div");
+      div.className = "onlineUser";
+      div.textContent = u.username;
+      if (u.isAdmin) {
+        div.classList.add("adminName");
+      }
+      onlinePanel.appendChild(div);
+    });
+  }
+
   // Send message
   function send() {
     if (!msgInput.value.trim()) return;
 
     socket.emit("chat message", {
-      text: msgInput.value
+      text: msgInput.value,
+      replyToId: replyToId
     });
 
     msgInput.value = "";
+    clearReply();
     socket.emit("stop typing");
   }
 
@@ -481,30 +672,100 @@
     }, 800);
   });
 
+  // Reply bar
+  function setReply(id, text, user) {
+    replyToId = id;
+    replyToText = text;
+    const replyBar = document.getElementById("replyBar");
+    const replyBarText = document.getElementById("replyBarText");
+    replyBarText.textContent = `Replying to ${user}: "${text.slice(0, 40)}"`;
+    replyBar.style.display = "flex";
+  }
+
+  function clearReply() {
+    replyToId = null;
+    replyToText = "";
+    document.getElementById("replyBar").style.display = "none";
+  }
+
+  document.getElementById("replyCancel").onclick = clearReply;
+
+  // Edit modal
+  document.getElementById("editConfirm").onclick = () => {
+    const newText = document.getElementById("editMessageInput").value.trim();
+    if (!newText || !pendingEditMessageId) {
+      document.getElementById("editModal").style.display = "none";
+      return;
+    }
+    socket.emit("edit message", {
+      id: pendingEditMessageId,
+      newText
+    });
+    pendingEditMessageId = null;
+    document.getElementById("editModal").style.display = "none";
+  };
+
+  document.getElementById("editCancel").onclick = () => {
+    pendingEditMessageId = null;
+    document.getElementById("editModal").style.display = "none";
+  };
+
   // Display chat messages
   socket.on("chat message", (msg) => {
     const div = document.createElement("div");
     div.className = "msg";
     div.id = msg.id;
 
+    let replyHtml = "";
+    if (msg.replyToId && document.getElementById(msg.replyToId)) {
+      const original = document.getElementById(msg.replyToId);
+      const originalUser = original.querySelector(".username").textContent;
+      const originalText = original.querySelector(".text").textContent;
+      replyHtml = `
+        <div class="replyPreview">
+          Replying to ${originalUser}: "${originalText.slice(0, 40)}"
+        </div>
+      `;
+    }
+
+    const adminClass = msg.isAdmin ? "username adminName" : "username";
+
     div.innerHTML = `
-      <div class="username">${msg.user}</div>
+      ${replyHtml}
+      <div class="${adminClass}">${msg.user}</div>
       <div class="text">${msg.text}</div>
       <div class="time">${msg.time}</div>
-      ${msg.user === username ? `<button class="editBtn">Edit</button>` : ""}
+      <div class="msgButtons">
+        <button class="replyBtn">Reply</button>
+        <button class="editBtn">Edit</button>
+        <button class="deleteBtn">Del</button>
+      </div>
     `;
 
-    if (msg.user === username) {
-      const btn = div.querySelector(".editBtn");
-      btn.onclick = () => {
-        const currentText = div.querySelector(".text").textContent;
-        const newText = prompt("Edit your message:", currentText);
-        if (newText === null || !newText.trim()) return;
+    const canEditOrDelete = (msg.user === username) || isAdmin;
 
-        socket.emit("edit message", {
-          id: msg.id,
-          newText: newText
-        });
+    const replyBtn = div.querySelector(".replyBtn");
+    replyBtn.onclick = () => {
+      const text = div.querySelector(".text").textContent;
+      const user = div.querySelector(".username").textContent;
+      setReply(msg.id, text, user);
+    };
+
+    const editBtn = div.querySelector(".editBtn");
+    const deleteBtn = div.querySelector(".deleteBtn");
+
+    if (!canEditOrDelete) {
+      editBtn.style.display = "none";
+      deleteBtn.style.display = "none";
+    } else {
+      editBtn.onclick = () => {
+        pendingEditMessageId = msg.id;
+        document.getElementById("editMessageInput").value = div.querySelector(".text").textContent;
+        document.getElementById("editModal").style.display = "flex";
+      };
+
+      deleteBtn.onclick = () => {
+        socket.emit("delete message", msg.id);
       };
     }
 
@@ -523,6 +784,13 @@
     if (!timeEl.textContent.includes("(edited)")) {
       timeEl.textContent += " (edited)";
     }
+  });
+
+  // Handle deleted messages
+  socket.on("delete message", (data) => {
+    const msgDiv = document.getElementById(data.id);
+    if (!msgDiv) return;
+    msgDiv.remove();
   });
 
   // Typing indicator
@@ -555,6 +823,71 @@
     messagesEl.appendChild(div);
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
+
+  // Rooms update
+  socket.on("rooms update", (list) => {
+    rooms = list;
+    renderRooms();
+  });
+
+  function renderRooms() {
+    const roomList = document.getElementById("roomList");
+    roomList.innerHTML = "";
+    rooms.forEach((r) => {
+      const div = document.createElement("div");
+      div.className = "roomItem";
+      if (r.name === currentRoom) div.classList.add("active");
+
+      const nameSpan = document.createElement("span");
+      nameSpan.textContent = r.name;
+
+      const lockSpan = document.createElement("span");
+      lockSpan.className = "roomLock";
+      lockSpan.textContent = r.locked ? "🔒" : "🔓";
+
+      div.appendChild(nameSpan);
+      div.appendChild(lockSpan);
+
+      div.onclick = () => {
+        if (!username) {
+          showModal("Set username first.");
+          return;
+        }
+        if (r.name === currentRoom) return;
+
+        if (r.locked) {
+          pendingRoomToJoin = r.name;
+          document.getElementById("joinRoomName").value = r.name;
+          document.getElementById("joinRoomName").disabled = true;
+          document.getElementById("joinRoomPassword").value = "";
+          document.getElementById("joinRoomModal").style.display = "flex";
+        } else {
+          socket.emit("join room", { roomName: r.name, password: "" }, (res) => {
+            if (!res.ok) {
+              showModal(res.error);
+            } else {
+              currentRoom = res.room;
+              roomNameEl.textContent = res.room;
+              messagesEl.innerHTML = "";
+              clearReply();
+              renderRooms();
+            }
+          });
+        }
+      };
+
+      roomList.appendChild(div);
+    });
+  }
+
+  // Users update
+  socket.on("users update", (data) => {
+    if (data.room !== currentRoom) return;
+    currentUsers = data.users || [];
+    if (onlinePanel.style.display === "flex") {
+      renderOnlinePanel();
+    }
+  });
 </script>
 
 </body>
