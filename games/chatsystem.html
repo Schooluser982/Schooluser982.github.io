@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Chat System</title>
-  <link rel="icon" type="image/png" href="games/Chat.png"/>
+  <link rel="icon" type="image/png" href="gamephoto/Chat.png"/>
   <style>
 body {
   font-family: "Inter", Arial, sans-serif;
@@ -187,12 +187,46 @@ body {
   let username = null;
   let typingTimeout;
 
-  // Detect GIF URLs and embed them
-  function renderMessageText(text) {
+  // Fetch GIF URL from Tenor page link
+  async function fetchTenorGif(url) {
+    try {
+      const idMatch = url.match(/-(\d+)$/);
+      if (!idMatch) return null;
+
+      const gifId = idMatch[1];
+      const apiUrl = `https://tenor.googleapis.com/v2/posts?ids=${gifId}&key=LIVDSRZULELA`;
+
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+
+      if (!data.results || !data.results[0]) return null;
+
+      return data.results[0].media_formats.gif.url;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Render message text with GIF embedding
+  async function renderMessageText(text) {
     const gifRegex = /(https?:\/\/\S+\.gif)/gi;
-    return text.replace(gifRegex, url => {
+    const tenorRegex = /(https?:\/\/tenor\.com\/view\/\S+)/gi;
+
+    let html = text.replace(gifRegex, url => {
       return `<img src="${url}" class="gifEmbed">`;
     });
+
+    const tenorLinks = text.match(tenorRegex);
+    if (tenorLinks) {
+      for (const link of tenorLinks) {
+        const gifUrl = await fetchTenorGif(link);
+        if (gifUrl) {
+          html = html.replace(link, `<img src="${gifUrl}" class="gifEmbed">`);
+        }
+      }
+    }
+
+    return html;
   }
 
   // Set username
@@ -244,37 +278,26 @@ body {
     div.className = "msg";
     div.id = msg.id;
 
-    div.innerHTML = `
-      <div class="username">${msg.user}</div>
-      <div class="text">${renderMessageText(msg.text)}</div>
-      <div class="time">${msg.time}</div>
-      ${msg.user === username ? `<button class="editBtn">Edit</button>` : ""}
-    `;
-
-    if (msg.user === username) {
-      const btn = div.querySelector(".editBtn");
-      btn.onclick = () => {
-        const currentText = div.querySelector(".text").textContent;
-        const newText = prompt("Edit your message:", currentText);
-        if (newText === null || !newText.trim()) return;
-
-        socket.emit("edit message", {
-          id: msg.id,
-          newText: newText
-        });
-      };
-    }
+    (async () => {
+      const rendered = await renderMessageText(msg.text);
+      div.innerHTML = `
+        <div class="username">${msg.user}</div>
+        <div class="text">${rendered}</div>
+        <div class="time">${msg.time}</div>
+        ${msg.user === username ? `<button class="editBtn">Edit</button>` : ""}
+      `;
+    })();
 
     box.appendChild(div);
     box.scrollTop = box.scrollHeight;
   });
 
   // Handle edited messages
-  socket.on("edit message", (data) => {
+  socket.on("edit message", async (data) => {
     const msgDiv = document.getElementById(data.id);
     if (!msgDiv) return;
 
-    msgDiv.querySelector(".text").innerHTML = renderMessageText(data.newText);
+    msgDiv.querySelector(".text").innerHTML = await renderMessageText(data.newText);
 
     const timeEl = msgDiv.querySelector(".time");
     if (!timeEl.textContent.includes("(edited)")) {
