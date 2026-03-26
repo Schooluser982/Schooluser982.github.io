@@ -15,7 +15,8 @@ body {
   height: 100vh;
 }
 
-#usernameBox {
+/* Username bar */
+  #usernameBox {
   background: #141416;
   padding: 15px;
   display: flex;
@@ -24,14 +25,16 @@ body {
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 
-#chatContainer {
+  /* Chat container */
+  #chatContainer {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding: 20px;
 }
 
-#messages {
+  /* Messages area */
+  #messages {
   flex: 1;
   overflow-y: auto;
   padding-right: 10px;
@@ -49,7 +52,8 @@ body {
   border-radius: 4px;
 }
 
-.msg {
+  /* Message bubble */
+  .msg {
   background: #1c1c1f;
   padding: 12px 16px;
   border-radius: 14px;
@@ -61,23 +65,26 @@ body {
   transition: background 0.2s;
 }
 
-.msg:hover {
+  .msg:hover {
   background: #222226;
 }
 
-.msg .username {
+  /* Username */
+  .msg .username {
   font-weight: 600;
   color: #4da3ff;
   margin-bottom: 4px;
 }
 
-.msg .time {
+  /* Timestamp */
+  .msg .time {
   font-size: 12px;
   opacity: 0.55;
   margin-top: 6px;
 }
 
-.editBtn {
+  /* Edit button */
+  .editBtn {
   position: absolute;
   right: 10px;
   top: 10px;
@@ -93,7 +100,8 @@ body {
   color: #fff;
 }
 
-.systemMsg {
+  /* System messages */
+  .systemMsg {
   text-align: center;
   opacity: 0.6;
   margin: 10px 0;
@@ -101,7 +109,8 @@ body {
   font-style: italic;
 }
 
-#typingIndicator {
+  /* Typing indicator */
+  #typingIndicator {
   font-size: 14px;
   opacity: 0.7;
   margin-bottom: 10px;
@@ -109,7 +118,8 @@ body {
   color: #4da3ff;
 }
 
-#inputArea {
+  /* Input area */
+  #inputArea {
   display: flex;
   gap: 10px;
   background: #141416;
@@ -118,7 +128,8 @@ body {
   box-shadow: 0 -2px 6px rgba(0,0,0,0.4);
 }
 
-#msgInput, #usernameInput {
+  /* Inputs */
+  #msgInput, #usernameInput {
   flex: 1;
   padding: 12px;
   border-radius: 10px;
@@ -129,12 +140,13 @@ body {
   transition: border 0.2s, background 0.2s;
 }
 
-#msgInput:focus, #usernameInput:focus {
+  #msgInput:focus, #usernameInput:focus {
   border-color: #4da3ff;
   background: #1f1f22;
 }
 
-#sendBtn, #setUserBtn {
+  /* Buttons */
+  #sendBtn, #setUserBtn {
   padding: 12px 20px;
   background: #4da3ff;
   border: none;
@@ -146,20 +158,12 @@ body {
   transition: background 0.2s, transform 0.1s;
 }
 
-#sendBtn:hover, #setUserBtn:hover {
+  #sendBtn:hover, #setUserBtn:hover {
   background: #1f7bd8;
 }
 
-#sendBtn:active, #setUserBtn:active {
+  #sendBtn:active, #setUserBtn:active {
   transform: scale(0.97);
-}
-
-/* GIF embed styling */
-.gifEmbed {
-  max-width: 250px;
-  border-radius: 10px;
-  margin-top: 8px;
-  display: block;
 }
   </style>
 </head>
@@ -186,48 +190,6 @@ body {
 
   let username = null;
   let typingTimeout;
-
-  // Fetch GIF URL from Tenor page link
-  async function fetchTenorGif(url) {
-    try {
-      const idMatch = url.match(/-(\d+)$/);
-      if (!idMatch) return null;
-
-      const gifId = idMatch[1];
-      const apiUrl = `https://tenor.googleapis.com/v2/posts?ids=${gifId}&key=LIVDSRZULELA`;
-
-      const res = await fetch(apiUrl);
-      const data = await res.json();
-
-      if (!data.results || !data.results[0]) return null;
-
-      return data.results[0].media_formats.gif.url;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  // Render message text with GIF embedding
-  async function renderMessageText(text) {
-    const gifRegex = /(https?:\/\/\S+\.gif)/gi;
-    const tenorRegex = /(https?:\/\/tenor\.com\/view\/\S+)/gi;
-
-    let html = text.replace(gifRegex, url => {
-      return `<img src="${url}" class="gifEmbed">`;
-    });
-
-    const tenorLinks = text.match(tenorRegex);
-    if (tenorLinks) {
-      for (const link of tenorLinks) {
-        const gifUrl = await fetchTenorGif(link);
-        if (gifUrl) {
-          html = html.replace(link, `<img src="${gifUrl}" class="gifEmbed">`);
-        }
-      }
-    }
-
-    return html;
-  }
 
   // Set username
   document.getElementById("setUserBtn").onclick = () => {
@@ -278,26 +240,37 @@ body {
     div.className = "msg";
     div.id = msg.id;
 
-    (async () => {
-      const rendered = await renderMessageText(msg.text);
-      div.innerHTML = `
-        <div class="username">${msg.user}</div>
-        <div class="text">${rendered}</div>
-        <div class="time">${msg.time}</div>
-        ${msg.user === username ? `<button class="editBtn">Edit</button>` : ""}
-      `;
-    })();
+    div.innerHTML = `
+      <div class="username">${msg.user}</div>
+      <div class="text">${msg.text}</div>
+      <div class="time">${msg.time}</div>
+      ${msg.user === username ? `<button class="editBtn">Edit</button>` : ""}
+    `;
+
+    if (msg.user === username) {
+      const btn = div.querySelector(".editBtn");
+      btn.onclick = () => {
+        const currentText = div.querySelector(".text").textContent;
+        const newText = prompt("Edit your message:", currentText);
+        if (newText === null || !newText.trim()) return;
+
+        socket.emit("edit message", {
+          id: msg.id,
+          newText: newText
+        });
+      };
+    }
 
     box.appendChild(div);
     box.scrollTop = box.scrollHeight;
   });
 
   // Handle edited messages
-  socket.on("edit message", async (data) => {
+  socket.on("edit message", (data) => {
     const msgDiv = document.getElementById(data.id);
     if (!msgDiv) return;
 
-    msgDiv.querySelector(".text").innerHTML = await renderMessageText(data.newText);
+    msgDiv.querySelector(".text").textContent = data.newText;
 
     const timeEl = msgDiv.querySelector(".time");
     if (!timeEl.textContent.includes("(edited)")) {
