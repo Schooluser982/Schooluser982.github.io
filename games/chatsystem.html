@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Home - Classroom</title>
-  <link rel="icon" type="image/png" href="icons8-google-classroom-color-72.png"/>
+  <title>Totaly Cool Math Games - Chat</title>
+  <link rel="icon" type="image/png" href="gamephoto/Chat.png"/>
   <style>
 body {
   font-family: "Inter", Arial, sans-serif;
@@ -179,14 +179,10 @@ body {
   let username = null;
   let typingTimeout;
 
-  // FIXED: Proper Eastern Time conversion
   function adjustTime(original) {
     const date = new Date(original);
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "America/New_York"
-    });
+    date.setHours(date.getHours() - 4);
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   }
 
   document.getElementById("setUserBtn").onclick = () => {
