@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Home - Classroom</title>
-  <link rel="icon" type="image/png" href="Icons8-google-classroom-color-72-vs2.png">
+  <title>Chat System</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -73,6 +72,7 @@
       justify-content: space-between;
       border-bottom: 1px solid #333;
       font-size: 14px;
+      position: relative;
     }
 
     #roomInfo {
@@ -104,7 +104,6 @@
       display: flex;
       flex-direction: column;
       padding: 10px 15px;
-      min-height: 0;
     }
 
     #messages {
@@ -112,7 +111,6 @@
       overflow-y: auto;
       padding-right: 10px;
       margin-bottom: 10px;
-      min-height: 0;
     }
 
     .msg {
@@ -257,7 +255,8 @@
     #createRoomModal,
     #joinRoomModal,
     #leaveModal,
-    #editModal {
+    #editModal,
+    #deleteRoomModal {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
@@ -351,6 +350,7 @@
     <div id="roomInfo">Room: <span id="roomName">public</span></div>
     <div id="topButtons">
       <button id="createRoomBtn">Create Room</button>
+      <button id="deleteRoomBtn" style="display:none;">Delete Room</button>
       <button id="leaveRoomBtn">Leave Room</button>
       <button id="onlineBtn">Online</button>
     </div>
@@ -444,19 +444,30 @@
   </div>
 </div>
 
+<!-- Delete room modal -->
+<div id="deleteRoomModal">
+  <div class="modalBox">
+    <div style="margin-bottom: 10px;">Delete this room and move everyone to public?</div>
+    <div class="modalButtons">
+      <button id="deleteRoomYes">Yes</button>
+      <button id="deleteRoomNo">No</button>
+    </div>
+  </div>
+</div>
+
 <!-- Online users panel -->
 <div id="onlinePanel"></div>
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
-  // Replace URL with your server if needed
-  const socket = io("https://9m8t7v-3000.csb.app");
+  // Placeholder backend URL (Render)
+  const BACKEND_URL = "https://your-chat-server.onrender.com";
+  const socket = io(BACKEND_URL);
 
   let username = null;
   let typingTimeout;
   let isAdmin = false;
   let pendingAdminName = null;
-  let pendingRoomToJoin = null;
   let pendingEditMessageId = null;
   let replyToId = null;
   let replyToText = "";
@@ -469,7 +480,7 @@
   const typingEl = document.getElementById("typingIndicator");
   const msgInput = document.getElementById("msgInput");
   const sendBtn = document.getElementById("sendBtn");
-
+  const deleteRoomBtn = document.getElementById("deleteRoomBtn");
   const onlinePanel = document.getElementById("onlinePanel");
 
   function showModal(msg) {
@@ -521,14 +532,14 @@
       sendBtn.disabled = false;
       document.getElementById("usernameBox").style.display = "none";
 
-      // persist username for reconnect
-      localStorage.setItem("username", name);
-
-      if (isAdmin && !document.getElementById("adminTag")) {
-        const tag = document.createElement("span");
-        tag.id = "adminTag";
-        tag.textContent = "(ADMIN)";
-        document.getElementById("roomInfo").appendChild(tag);
+      if (isAdmin) {
+        if (!document.getElementById("adminTag")) {
+          const tag = document.createElement("span");
+          tag.id = "adminTag";
+          tag.textContent = "(ADMIN)";
+          document.getElementById("roomInfo").appendChild(tag);
+        }
+        deleteRoomBtn.style.display = "inline-block";
       }
     });
   }
@@ -575,7 +586,7 @@
     document.getElementById("createRoomModal").style.display = "none";
   };
 
-  // Join room modal (used only for locked rooms)
+  // Join room modal (for non-admins on locked rooms)
   document.getElementById("joinRoomConfirm").onclick = () => {
     const roomName = document.getElementById("joinRoomName").value.trim();
     const password = document.getElementById("joinRoomPassword").value;
@@ -590,6 +601,7 @@
         roomNameEl.textContent = res.room;
         messagesEl.innerHTML = "";
         clearReply();
+        renderRooms();
       }
     });
     document.getElementById("joinRoomModal").style.display = "none";
@@ -615,12 +627,41 @@
         roomNameEl.textContent = res.room;
         messagesEl.innerHTML = "";
         clearReply();
+        renderRooms();
       }
     });
   };
 
   document.getElementById("leaveNo").onclick = () => {
     document.getElementById("leaveModal").style.display = "none";
+  };
+
+  // Delete room modal (admin only)
+  deleteRoomBtn.onclick = () => {
+    if (!username) return showModal("Set username first.");
+    if (!isAdmin) return showModal("Only admins can delete rooms.");
+    if (currentRoom === "public") return showModal("You cannot delete the public room.");
+    document.getElementById("deleteRoomModal").style.display = "flex";
+  };
+
+  document.getElementById("deleteRoomYes").onclick = () => {
+    document.getElementById("deleteRoomModal").style.display = "none";
+    const roomToDelete = currentRoom;
+    socket.emit("delete room", roomToDelete, (res) => {
+      if (!res.ok) {
+        showModal(res.error);
+      } else {
+        currentRoom = "public";
+        roomNameEl.textContent = "public";
+        messagesEl.innerHTML = "";
+        clearReply();
+        showSystemMessage(`Room "${roomToDelete}" deleted. Everyone moved to public.`);
+      }
+    });
+  };
+
+  document.getElementById("deleteRoomNo").onclick = () => {
+    document.getElementById("deleteRoomModal").style.display = "none";
   };
 
   // Online users dropdown
@@ -861,8 +902,8 @@
         }
         if (r.name === currentRoom) return;
 
-        if (r.locked) {
-          pendingRoomToJoin = r.name;
+        // Admin bypass for locked rooms
+        if (r.locked && !isAdmin) {
           document.getElementById("joinRoomName").value = r.name;
           document.getElementById("joinRoomName").disabled = true;
           document.getElementById("joinRoomPassword").value = "";
@@ -895,54 +936,11 @@
     }
   });
 
-  // --- ADDED: connection/disconnection + resetUI ---
-
-  socket.on("connect", () => {
-    console.log("Connected / Reconnected");
-
-    const saved = localStorage.getItem("username");
-
-    if (saved) {
-      console.log("Restoring session for:", saved);
-
-      socket.emit("set username", { username: saved }, (res) => {
-        if (!res || !res.ok) {
-          console.log("Failed to restore session");
-          showModal("Session expired. Please set username again.");
-          resetUI();
-          return;
-        }
-
-        // Restore state
-        username = saved;
-        isAdmin = res.isAdmin;
-        currentRoom = res.room || "public";
-        roomNameEl.textContent = currentRoom;
-
-        msgInput.disabled = false;
-        sendBtn.disabled = false;
-        document.getElementById("usernameBox").style.display = "none";
-
-        console.log("Session restored successfully");
-      });
-    }
-  });
-
-  socket.on("disconnect", () => {
-    console.log("Disconnected from server");
-    showModal("Disconnected... trying to reconnect");
-  });
-
-  function resetUI() {
-    username = null;
-    isAdmin = false;
-
-    msgInput.disabled = true;
-    sendBtn.disabled = true;
-
-    document.getElementById("usernameBox").style.display = "flex";
-  }
+  // Keep-alive pinger every 14 minutes
+  setInterval(() => {
+    fetch(BACKEND_URL + "/ping").catch(() => {});
+  }, 14 * 60 * 1000);
 </script>
-<script src="./reconnect.js"></script>
+
 </body>
 </html>
