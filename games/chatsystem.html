@@ -521,6 +521,9 @@
       sendBtn.disabled = false;
       document.getElementById("usernameBox").style.display = "none";
 
+      // persist username for reconnect
+      localStorage.setItem("username", name);
+
       if (isAdmin && !document.getElementById("adminTag")) {
         const tag = document.createElement("span");
         tag.id = "adminTag";
@@ -891,6 +894,54 @@
       renderOnlinePanel();
     }
   });
+
+  // --- ADDED: connection/disconnection + resetUI ---
+
+  socket.on("connect", () => {
+    console.log("Connected / Reconnected");
+
+    const saved = localStorage.getItem("username");
+
+    if (saved) {
+      console.log("Restoring session for:", saved);
+
+      socket.emit("set username", { username: saved }, (res) => {
+        if (!res || !res.ok) {
+          console.log("Failed to restore session");
+          showModal("Session expired. Please set username again.");
+          resetUI();
+          return;
+        }
+
+        // Restore state
+        username = saved;
+        isAdmin = res.isAdmin;
+        currentRoom = res.room || "public";
+        roomNameEl.textContent = currentRoom;
+
+        msgInput.disabled = false;
+        sendBtn.disabled = false;
+        document.getElementById("usernameBox").style.display = "none";
+
+        console.log("Session restored successfully");
+      });
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Disconnected from server");
+    showModal("Disconnected... trying to reconnect");
+  });
+
+  function resetUI() {
+    username = null;
+    isAdmin = false;
+
+    msgInput.disabled = true;
+    sendBtn.disabled = true;
+
+    document.getElementById("usernameBox").style.display = "flex";
+  }
 </script>
 
 </body>
