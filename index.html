@@ -296,6 +296,17 @@
     <div id="visitCounterBox">
       <p>Total Visits: <span id="visitCount">Loading...</span></p>
     </div>
+    <script>
+  fetch("https://your-chat-server.onrender.com/visits")
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("visitCount").textContent = data.visits;
+    })
+    .catch(() => {
+      document.getElementById("visitCount").textContent = "Error";
+    });
+</script>
+
 
     <!-- Search Bar -->
     <input type="text" id="searchBar" placeholder="Search for a game...">
