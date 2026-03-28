@@ -297,7 +297,7 @@
       <p>Total Visits: <span id="visitCount">Loading...</span></p>
     </div>
     <script>
-  fetch("https://chatbackend-d4v6.onrender.com/visits")
+  fetch("Your-url-here")
     .then(res => res.json())
     .then(data => {
       document.getElementById("visitCount").textContent = data.visits;
